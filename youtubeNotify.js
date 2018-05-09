@@ -1,3 +1,9 @@
+class Message {
+  constructor(title, img, message) {
+    Object.assign(this, { title, img, message });
+  }
+}
+
 regexps = [/勇気ちひろ/, /森中花咲/, /モイラ/, /樋口楓/, /美兎/, /静 ?凛/, /刀也/] // ← regexps.push()で動的に変更できる
 chatItems = document.querySelector('#items.yt-live-chat-item-list-renderer');
 m = new MutationObserver(records => {
