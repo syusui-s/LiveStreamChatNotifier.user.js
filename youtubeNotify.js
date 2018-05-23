@@ -50,11 +50,7 @@ class NotificatonMessage {
    * Notification APIを用いて、通知する
    */
   async notify() {
-    if (window.Notificaton) {
-      window.console.error('Notification がサポートされていません');
-      return null;
-    }
-
+    // TODO  直接依存しない形にする
     return new window.Notification(this.title || '', {
       icon: this.iconUrl,
       body: this.body,
@@ -105,7 +101,6 @@ class NotificationService {
 async function main() {
   const regexps = [/勇気ちひろ/, /森中花咲/, /モイラ/, /樋口楓/, /美兎/, /静 ?凛/, /刀也/]; // ← regexps.push()で動的に変更できる
   const notificationService = new NotificationService(notifySound, regexps);
-  const chatItemList = document.querySelector('#items.yt-live-chat-item-list-renderer');
 
   const toMessage = chatItem => {
     const nameElem  = chatItem.querySelector('#author-name');
@@ -136,8 +131,22 @@ async function main() {
       }
     });
   };
+    
+  // Notification APIが使えない場合は終了
+  if (window.Notificaton) {
+    window.console.error('Notification がサポートされていません');
+    return;
+  }
 
   await notificationService.requestPermission();
+
+  const chatIframe   = document.querySelector('#chatframe');
+  const chatItemList = chatIframe && chatIframe.contentDocument.querySelector('#items.yt-live-chat-item-list-renderer');
+
+  /* チャットが見つからない場合は、終了 */
+  if (! chatItemList) {
+    return;
+  }
 
   const m = new MutationObserver(observer);
   m.observe(chatItemList, { childList: true });
