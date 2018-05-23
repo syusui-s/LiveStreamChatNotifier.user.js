@@ -1,3 +1,16 @@
+// ==UserScript==
+// @name               YouTubeCommentNotifier.user.js
+// @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
+// @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
+// @version            0.9.19
+// @match              https://www.youtube.com/watch*
+// @match              https://www.youtube.com/live_chat_replay
+// @grant              unsafeWindow
+// @run-at             document-end
+// ==/UserScript==
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
 const notifySound = {
   audio: new Audio('data:audio/wav;base64,//N0ZAAKARdKr6CUAAmIAdwBQBAAApAAoEAGMYxjG+QAZjAAEAAAAc5znP+pznQOAGAYBgGAYHD5zkIQhCN///OQhP/7f////+hA4AYHD5ygIAmD4Pg+93y7+D4P1HP//+IAQBD///////////wxBAEAQcJAQ4Pn/Z6wfBwMZQHwfB8H/ggCETg4CCq7S6XUa7JuDW63JKSyQg08gJ2CqqhXwEURD4m7//N0ZBwO1gV5L8GoAQlwAhgBgBAA6m0dVKs4zSUCkR4rgNvmCaJ7Gmmocd+VITkmmqVFtrpMGyIp5AF+cqEp6o30XbSYTmIxzMb6Rv/8fN/5o0J/3qZ/9e236vuK7WRlbP/YoNy3/9PeQiZ/+n0xl//////////33e1X36W/VUElB0R2vZSsHRWPG/2CIqKCH97BwYMV1uultBbkBYnq+qzNJg2KzVVh//N0ZBINWVtpL+SgAQlYAgwBwBAAix3WksLwUbYNKJSzmZIq5//goAYF4CgPgBwbgsEQsWETSEiEm0dHZaZmv+v4/9pjuZS5mL7+bji/////////hmooWGmDxx5DGO9wiJcJlvuhKf6WzX//1EP///////////V/lNbUrdHuJNUlsJB+9jRwJjhhYRjRYAMHHzi0Krt9upiIYUfYFC+IcBr3uuB8oQXp//N0ZBQM9Itljz0PWgibqggAAAUcbiObpfjlllu9b2+trDXr3X06Q6fDEitg6GgEICVA5gCQkoGcAeAQAMgcidfhw34cuLseg4YBUQgQeBAwsGAGEg0DT1fV/VMBMBPJB0JGTJkan/9v/p6J07X3eeqlnJfvaykctLO63PaUy3MrodVu9qnIioUgxKmZh4mIgTfbDYmFgNoEcJlyz1nNyY/3X+lklXbK//N0ZB0OvMWLjySvhwgzVggAAEXp0s2E9XV1U+dG/+rCQtM4iAKgFyKElBcCdkoM0+yCKklZcy8MaHqOdSE4Lg2mg9VbBFniea17v3puEgIBgTlCBo0FToKki3///DrWBUBBIPGTIDCJEBgwTDH//n//y3nLkWt+cjgBPMNzw47Y+1U3kMDqr+AYpoevhsW63f+22hxCAPnJbNTLYYuYSlVctH0UUORr//N0ZBkMPONxLxgsewlwAggAAAS8TQRHhiEyE0Q7phGQ4Akhxf5xMxCBsDYEgJAeNhxA6nA6JxGEUeiGBQBYdg4KScHghriZCeVXv4A3hggQB9584fGyP/9UreueK///////////9P/vSy54tLiIXLtUTqYXDzkgol02FR4xJNhYDCNCvtvvrNAGhCRFj8HAXTIOceI5iXCULUAy5IvR28CkBDcBjNgN//N0ZCQN4VtfKgwsfgdi2ggAAAUdgNqZGRkZaKv//Jhii/mZna1rzTNF3raLoXFqZtwZB6IwiiMIw6i4WA3CQTx+CgUE0Kx4Ighm44FgqCIyS1/sLFj8ggCAIAmD/5fo/+Z6V+26oycy7uigyfqxyoD83XkjbtHXM6bt3qwK/921tskgAEYFICqC0BKE4DY/CmFdyUmFkjEYZsYOHFCqmT2dldlPUxJq//N0ZCoKfdN3LygG54ngAggAAAS82m/m526WnU0po/11//1rKo3DtInSSLQJGmLRBRRZhMYHGjhw1IMmgnAf////////////e9JdS2yjG7hQy2CylirEqNWGho8FTgZU08NJFWpC9WnE0nHzDLoXLBWQJ4HSo13RzYrlumW2OZdwz2SoaHYHmQXQGS9/akeay8PyJmYTQ2eDqwMVDRZ0q6/d0fUp4udP//N0ZEEK0KdRKaQMAArYAgQBQBAAESwssMpAVjwCaExlLnVL4r/81UXgT///////////nG3cgqTehxwu+ogaiJ4DCbFAU4YaMLlx0c06GwUsCREShtopt7fXXwSe6yVuSgsAhdpxdh2CuktV5oqUphCdm2wBxgZnqdBFAUAMATExQsLFgeDUXMhf/+ig4mkKXbYWJDoeLHAucUJEcadKrKkjEsfFyxeZ//N0ZFISddlJL8egAAYgAiABgBAAjg8huGFioDokPTfti///af/8mVXWybekmqu1pYoY3///+g0t5/7/+0DkgBaJr//j/////5+bwaEiP////6r7FB9f/////////////16qGIQglsq0SrHf3XGU1RNgPYA3gKMMEdHqSrLRMUaSX////////////////////7+nevNTdlam071mS00+e4VjunOjaOQy//N0ZDgIRc0EAOaIAI9LkfwBwBAB6K7S5LvMVGRgdX///9v////////////2S+t9LcnR5VVTqZEduHRVK5VMzOgpVVCOyrdwTqVzLYQjsdpAp2UeRh1U6nMINR9VETidmZqh88t0sqAlr1aUeV27Pvvc79VcqMlZXyXt6w7hoQyQiDvPeCp46VLVB0svERU6JYaEsRPEQMgqdr//////if//7/T//Vv///N0ZEsHsAD7GAQiXA6DpewACAUxlLNqUpSlK1DG81HKUszobzGVylQxSmAiqFARKOUqhWdSlKVwoCXqV9WDATi1IEjLzKWT+WWSxyMv/NWstlj/2zIylk/llkspf8uZMstllllsqGTWT6yyyWOR//mTLLZZZZbHI1ayX+yyWfyyVDVlls/llCgog5//sGqphqu////////////4sLiqXYqKiop9QsLC//N0ZGYJ9X6SAQQDEoiYAUACAAQC7PmgqKCweAoVFhIaTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV'),
 
@@ -86,7 +99,7 @@ class NotificationService {
   }
 
   async requestPermission() {
-    if (Notification.permission !== 'default') {
+    if (Notification.permission !== 'granted') {
 
       const result = await Notification.requestPermission();
 
@@ -99,7 +112,7 @@ class NotificationService {
 }
 
 async function main() {
-  const regexps = [/勇気ちひろ/, /森中花咲/, /モイラ/, /樋口楓/, /美兎/, /静 ?凛/, /刀也/]; // ← regexps.push()で動的に変更できる
+  const regexps = [/勇気ちひろ/, /森中花咲/, /モイラ/, /樋口楓/, /月ノ美兎/, /静 ?凛/, /刀也/]; // ← regexps.push()で動的に変更できる
   const notificationService = new NotificationService(notifySound, regexps);
 
   const toMessage = chatItem => {
@@ -108,11 +121,11 @@ async function main() {
     const iconElem  = chatItem.querySelector('yt-img-shadow > img#img');
     const bodyElem  = chatItem.querySelector('#message');
 
-    if (nameElem && badgeElem && iconElem) {
-      const name    = nameElem.textContent;
-      const iconUrl = iconElem.src;
-      const body    = bodyElem.textContent;
-      const badgeType = badgeElem.type;
+    if (nameElem && iconElem) {
+      const name      = nameElem.textContent;
+      const iconUrl   = iconElem.src;
+      const body      = bodyElem.textContent;
+      const badgeType = badgeElem && badgeElem.type; // nullable
 
       return new Message(name, iconUrl, badgeType, body);
     }
@@ -133,23 +146,32 @@ async function main() {
   };
     
   // Notification APIが使えない場合は終了
-  if (window.Notificaton) {
+  if (! window.Notification) {
     window.console.error('Notification がサポートされていません');
     return;
   }
 
   await notificationService.requestPermission();
 
-  const chatIframe   = document.querySelector('#chatframe');
-  const chatItemList = chatIframe && chatIframe.contentDocument.querySelector('#items.yt-live-chat-item-list-renderer');
+  let chatIframe;
+  let chatItemList;
 
-  /* チャットが見つからない場合は、終了 */
-  if (! chatItemList) {
-    return;
+  for (;;) {
+    chatIframe   = document.querySelector('#chatframe');
+    chatItemList = chatIframe && chatIframe.contentDocument.querySelector('#items.yt-live-chat-item-list-renderer');
+
+    /* チャットが見つからない場合は、終了 */
+    if (! chatItemList) {
+      await sleep(1000);
+      continue;
+    }
+
+    break;
   }
 
   const m = new MutationObserver(observer);
   m.observe(chatItemList, { childList: true });
+
 }
 
 main();
