@@ -2,7 +2,7 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            0.9.20
+// @version            0.9.21
 // @match              https://www.youtube.com/watch*
 // @match              https://www.youtube.com/live_chat_replay
 // @grant              unsafeWindow
@@ -112,7 +112,7 @@ class NotificationService {
 }
 
 async function main() {
-  const regexps = [/勇気ちひろ/, /森中花咲/, /モイラ/, /樋口楓/, /月ノ美兎/, /静 ?凛/, /刀也/]; // ← regexps.push()で動的に変更できる
+  const regexps = [/勇気ちひろ/, /森中花咲/, /宇志海いちご/, /モイラ/, /樋口楓/, /月ノ美兎/, /静 ?凛/, /刀也/]; // ← regexps.push()で動的に変更できる
   const notificationService = new NotificationService(notifySound, regexps);
 
   const toMessage = chatItem => {
