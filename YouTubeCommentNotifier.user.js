@@ -2,21 +2,34 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            0.9.24
-// @match              https://www.youtube.com/watch*
-// @match              https://www.youtube.com/live_chat_replay
-// @grant              unsafeWindow
+// @version            0.9.25
+// @match              https://www.youtube.com/*
 // @run-at             document-end
 // ==/UserScript==
 
+/**
+ * 指定のミリ秒 ms だけ、何もしないで待機する
+ *
+ * @param {number} ms 待機ミリ秒
+ */
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-// count 回まで処理を再試行する。戻り値が falsy の値のとき、次の処理に移る
-const autoRetry = async (count, fn, ...args) => {
+/**
+ * 処理を再試行する async function
+ *
+ * @param {number}   count    再試行の最大回数
+ * @param {number}   interval 次の再試行までの間隔をミリ秒で指定する
+ * @param {function} fn       処理
+ * @param {array}    args     処理への引数
+ */
+const retry = async (count, interval, fn, ...args) => {
   for (let i = 0; i < count; ++i) {
     const result = await fn(...args);
+
     if (result)
       return result;
+
+    await sleep(interval);
   }
 };
 
@@ -32,10 +45,22 @@ const notifySound = {
  * ライブストリームに流れるメッセージ
  */
 class Message {
+  /**
+   * @param {string}  author    投稿者名
+   * @param {string}  iconUrl   投稿者のアイコン
+   * @param {?string} badgeType 投稿者のバッジ
+   * @param {string}  body      メッセージの本体
+   */
   constructor(author, iconUrl, badgeType, body) {
     Object.assign(this, { author, iconUrl, badgeType, body, });
   }
 
+  /**
+   * メッセージの著者名に引数の正規表現が一致するならtrueを返す
+   *
+   * @param {RegExp} regex 正規表現
+   * @return {boolean} 一致するかどうか
+   */
   matchName(regex) {
     return regex.test(this.author);
   }
@@ -53,9 +78,14 @@ class Message {
 }
 
 /**
- * 通知メッセージを仲介してくれるやつ
+ * 通知されるメッセージ
  */
 class NotificatonMessage {
+  /**
+   * メッセージから通知用のメッセージを生成する
+   *
+   * @param {Message} message メッセージ
+   */
   static fromMessage(message) {
     return new this(
       message.author,
@@ -64,6 +94,11 @@ class NotificatonMessage {
     );
   }
 
+  /**
+   * @param {string} title   通知のタイトル
+   * @param {string} iconUrl 通知のアイコン
+   * @param {string} body    通知の本文
+   */
   constructor(title, iconUrl, body) {
     Object.assign(this, { title, iconUrl, body });
   }
@@ -93,7 +128,7 @@ class NotificationService {
   }
 
   /**
-   * 通知します
+   * 指定のメッセージを条件に従って通知します
    *
    * @param {Message} message
    */
@@ -107,22 +142,59 @@ class NotificationService {
     }
   }
 
+  /**
+   * 通知方式がサポートされているならば、true を返す。
+   */
+  supported() {
+    return !! window.Notification;
+  }
+
+  /**
+   * 通知方式がサポートされて**いない**ならば、true を返す。
+   */
+  notSupported() {
+    return ! this.supported();
+  }
+
+  /**
+   * 権限を要求する
+   */
   async requestPermission() {
-    if (Notification.permission !== 'granted') {
+    const result = await Notification.requestPermission();
 
-      const result = await Notification.requestPermission();
-
-      if (result !== 'granted') {
-        window.alert('Notification APIで通知の許可がありません。通知を受け取るには、通知を許可してください。');
-        return null;
-      }
+    if (result === 'granted') {
+      return Promise.resolve(true);
     }
+
+    window.alert('Notification APIで通知の許可がありません。通知を受け取るには、通知を許可してください。');
+    return null;
   }
 }
 
 async function main() {
   const regexps = [/勇気ちひろ/, /森中花咲/, /宇志海いちご/, /《にじさんじ所属の女神》モイラ/, /樋口楓/, /月ノ美兎/, /静 ?凛/, /刀也/]; // ← regexps.push()で動的に変更できる
   const notificationService = new NotificationService(notifySound, regexps);
+
+  // Notification APIが使えない場合は終了
+  if (notificationService.notSupported()) {
+    window.console.error('Notification がサポートされていません');
+    return;
+  }
+
+  await notificationService.requestPermission();
+
+  const RETRY    = 30;  // 回
+  const INTERVAL = 500; // ミリ秒
+
+  const chatItemList = await retry(RETRY, INTERVAL, async () => {
+    const chatIframe   = document.querySelector('#chatframe');
+    const chatItemList = chatIframe && chatIframe.contentDocument.querySelector('#items.yt-live-chat-item-list-renderer');
+
+    return chatItemList;
+  });
+
+  if (! chatItemList)
+    return;
 
   const toMessage = chatItem => {
     const nameElem  = chatItem.querySelector('#author-name');
@@ -139,7 +211,7 @@ async function main() {
       return new Message(name, iconUrl, badgeType, body);
     }
   };
-
+    
   const observer = records => {
     records.forEach(record => {
       switch (record.type) {
@@ -153,34 +225,9 @@ async function main() {
       }
     });
   };
-    
-  // Notification APIが使えない場合は終了
-  if (! window.Notification) {
-    window.console.error('Notification がサポートされていません');
-    return;
-  }
-
-  await notificationService.requestPermission();
-
-  const INTERVAL = 500; // ms
-  const RETRY    = 30;  // times
-
-  const chatItemList = await autoRetry(RETRY, async () => {
-    const chatIframe   = document.querySelector('#chatframe');
-    const chatItemList = chatIframe && chatIframe.contentDocument.querySelector('#items.yt-live-chat-item-list-renderer');
-
-    if (! chatItemList)
-      await sleep(INTERVAL);
-
-    return chatItemList;
-  });
-
-  if (! chatItemList)
-    return;
 
   const m = new MutationObserver(observer);
   m.observe(chatItemList, { childList: true });
-
 }
 
 main();
