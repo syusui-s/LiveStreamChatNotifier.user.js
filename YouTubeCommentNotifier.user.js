@@ -198,7 +198,6 @@ async function main() {
 
   const toMessage = chatItem => {
     const nameElem  = chatItem.querySelector('#author-name');
-    const badgeElem = chatItem.querySelector('yt-live-chat-author-badge-renderer');
     const iconElem  = chatItem.querySelector('yt-img-shadow > img#img');
     const bodyElem  = chatItem.querySelector('#message');
 
@@ -206,7 +205,7 @@ async function main() {
       const name      = nameElem.textContent;
       const iconUrl   = iconElem.src;
       const body      = bodyElem.textContent;
-      const badgeType = badgeElem && badgeElem.getAttribute('type'); // nullable
+      const badgeType = nameElem.getAttribute('type');
 
       return new Message(name, iconUrl, badgeType, body);
     }
