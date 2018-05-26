@@ -165,7 +165,7 @@ async function main() {
   const INTERVAL = 500; // ms
   const RETRY    = 30;  // times
 
-  const chatItemList = autoRetry(RETRY, async () => {
+  const chatItemList = await autoRetry(RETRY, async () => {
     const chatIframe   = document.querySelector('#chatframe');
     const chatItemList = chatIframe && chatIframe.contentDocument.querySelector('#items.yt-live-chat-item-list-renderer');
 
