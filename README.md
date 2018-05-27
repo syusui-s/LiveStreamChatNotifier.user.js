@@ -30,6 +30,8 @@ YouTubeのライブチャットのストリームで特定のメッセージを�
 ライセンス
 -----
 
+本ソフトウェアは、自由ソフトウェアです。
+
 Copyright (c) 2018 Shusui Moyatani
 
 This program is free software: you can redistribute it and/or modify
