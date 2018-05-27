@@ -179,7 +179,7 @@ class NotificationService {
  *
  */
 async function main() {
-  const regexps = [/勇気ちひろ/, /森中花咲/, /宇志海いちご/, /《にじさんじ所属の女神》モイラ/, /樋口楓/, /月ノ美兎/, /静 ?凛/, /刀也/]; // ← regexps.push()で動的に変更できる
+  const regexps = [/勇気ちひろ/, /森中花咲/, /宇志海いちご/, /《にじさんじ所属の女神》モイラ/, /樋口楓/, /月ノ美兎/, /静 ?凛/, /刀也/];
   const notificationService = new NotificationService(notifySound, regexps);
 
   if (notificationService.notSupported()) {
@@ -188,7 +188,7 @@ async function main() {
   }
 
   if (! await notificationService.requestPermission()) {
-    window.console.error('Notification がサポートされていません');
+    window.console.error('Notificatonの権限がありません');
     return;
   }
 
