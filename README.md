@@ -12,10 +12,16 @@ YouTubeCommentNotifier.user.js
 
 [インストール方法はこちらに記載しています](https://syusui-s.github.io/YouTubeCommentNotifier.user.js/)
 
+バグ報告・機能提案・プルリクエスト
+-----
+
+[CONTRIBUTING.md](CONTRIBUTING.md)をご覧ください。
+
 ライセンス
 -----
 
 本ソフトウェアは、自由ソフトウェアです。
+GNU一般公衆利用許諾書(GPL)のもとで公開します。
 
 Copyright (c) 2018 Shusui Moyatani
 
