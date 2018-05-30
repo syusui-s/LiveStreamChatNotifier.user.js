@@ -123,7 +123,7 @@ div.big-centered {
 	width: 560px;
 }
 
-img#screenshot {
+img.screenshot {
 	display: block;
 	box-shadow: #999 0 0px 5px -1px;
 	margin: auto;
