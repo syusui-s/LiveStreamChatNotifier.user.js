@@ -141,3 +141,13 @@ a.button {
 	font-weight: bold;
 	vertical-align: middle;
 }
+
+a.button:hover {
+	animation: button_hover 0.2s ease;
+	background: #ae5;
+}
+
+@keyframes button_hover {
+	0%   { background: #8d3; }
+	100% { background: #ae5; }
+}
