@@ -4,9 +4,12 @@ YouTubeCommentNotifier.user.js
 **他のVTuberが配信でコメントをすると通知してくれるプラグインです。**
 
 VTuberがVTuberの配信でコメントすることが増えてきましたが、コメントを目で追うのは大変です。
-
 これをインストールすると、VTuberのコメントを通知してくれるので、追うのが楽になります。
-VTuber同士の会話を見たいという方にオススメです。
+
+
+* 最初から多くのVTuberに対応
+* Chrome、Firefox、Edge、Safariなど、多くのブラウザに対応（UserScriptなので）
+
 
 インストール方法
 -----
