@@ -5,9 +5,9 @@ html {
 }
 
 body {
-	font-size: 16px;
+	font-size: 18px;
 	color: #3B3B3B;
-	width: 860px;
+	width: 820px;
 	margin: auto;
 	padding: 32px 64px;
 	box-sizing: content-box;
@@ -19,42 +19,32 @@ h1, h2, h3, h4, h5, h6 {
 	font-weight: bold;
 }
 
-h1 { font-size: 32px; margin-bottom: 16px; }
-h2 { font-size: 24px; }
-h3 { font-size: 19px; }
+h1 { font-size: 2em; margin-bottom: 1em; }
+h2 { font-size: 1.5em; }
+h3 { font-size: 1.25em; }
 h4 { font-size: inherit; }
 
 ul, ol {
-	margin-left: 20px;
+	margin-left: 1.25px;
 }
 
 p, ul, ol, dl {
-	margin-top: 10px;
-	margin-bottom: 16px;
-	line-height: 23px;
+	margin-top: 0.625em;
+	margin-bottom: 1em;
+	line-height: 1.5em;
 }
 
 dt { font-weight: bold; }
-dd { margin-left: 40px; }
+dd { margin-left: 2.5em; }
 
 header#page-header {
-	margin-bottom: 24px;
-}
-
-header#page-header div#banner {
-	display: block;
-	height: 96px;
-	padding-left: 96px;
-	background-image: url({{"/images/icon.png" | prepend: site.baseurl }});
-	background-repeat: no-repeat;
-	background-size: 72px;
+	margin-bottom: 1.5px;
 }
 
 header#page-header h1 {
 	margin: 0;
 	padding: 0;
-	font-size: 48px;
-	line-height: 72px;
+	font-size: 2.5em;
 }
 
 header#page-header h1 > a {
@@ -130,11 +120,24 @@ div.big-centered {
 	margin: auto;
 	text-align: center;
 	font-size: 17px;
-	width: 520px;
+	width: 560px;
 }
 
 img#screenshot {
 	display: block;
 	box-shadow: #999 0 0px 5px -1px;
 	margin: auto;
+}
+
+a.button {
+	display: inline-block;
+	margin-bottom: 10px;
+	padding: 0.5em 1.25em;
+	line-height: 2.5em;
+	color: #fff;
+	background: #8d3;
+	font-size: 1.25em;
+	text-decoration: none;
+	font-weight: bold;
+	vertical-align: middle;
 }
