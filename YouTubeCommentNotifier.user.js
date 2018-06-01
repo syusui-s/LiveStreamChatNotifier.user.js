@@ -4,6 +4,7 @@
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
 // @version            0.9.29
 // @match              https://www.youtube.com/*
+// @match              https://gaming.youtube.com/*
 // @run-at             document-end
 // @downloadURL        https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/YouTubeCommentNotifier.user.js
 // @updateURL          https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/YouTubeCommentNotifier.user.js
@@ -205,7 +206,8 @@ async function main() {
 
   const chatItemList = await retry(RETRY, INTERVAL, async () => {
     const chatIframe   = document.querySelector('#chatframe');
-    const chatItemList = chatIframe && chatIframe.contentDocument.querySelector('#items.yt-live-chat-item-list-renderer');
+    const chatDocument = chatIframe ? chatIframe.contentDocument : document;
+    const chatItemList = chatDocument.querySelector('#items.yt-live-chat-item-list-renderer');
 
     return chatItemList;
   });
