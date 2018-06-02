@@ -2,9 +2,9 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            0.10.0
-// @match              https://www.youtube.com/*
-// @match              https://gaming.youtube.com/*
+// @version            0.10.1
+// @match              https://www.youtube.com/watch*
+// @match              https://gaming.youtube.com/watch*
 // @run-at             document-end
 // @downloadURL        https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/YouTubeCommentNotifier.user.js
 // @updateURL          https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/YouTubeCommentNotifier.user.js
