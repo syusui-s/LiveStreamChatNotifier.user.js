@@ -8,6 +8,7 @@
 // @run-at             document-end
 // @downloadURL        https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/YouTubeCommentNotifier.user.js
 // @updateURL          https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/YouTubeCommentNotifier.user.js
+// @grant              GM.notification
 // ==/UserScript==
 
 /**
@@ -116,17 +117,6 @@ class NotificatonMessage {
   constructor(title, iconUrl, body) {
     Object.assign(this, { title, iconUrl, body });
   }
-
-  /**
-   * Notification APIを用いて、通知する
-   */
-  async notify() {
-    // TODO  直接依存しない形にする
-    return new window.Notification(this.title || '', {
-      icon: this.iconUrl,
-      body: this.body,
-    });
-  }
 }
 
 /**
@@ -149,8 +139,13 @@ class NotificationService {
   notify(message) {
     if (message.isModerator() || message.isOwner() || message.matchNameSome(this.authorNamePatterns)) {
       NotificatonMessage
-        .fromMessage(message)
-        .notify();
+        .fromMessage(message);
+
+      GM.notification(
+        this.body,
+        this.title || '',
+        this.iconUrl
+      );
 
       this.notifySound.play();
     }
@@ -160,7 +155,7 @@ class NotificationService {
    * 通知方式がサポートされているならば、true を返す。
    */
   supported() {
-    return !! window.Notification;
+    return !! GM.notification;
   }
 
   /**
