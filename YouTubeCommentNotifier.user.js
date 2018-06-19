@@ -2,7 +2,7 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            0.10.4
+// @version            0.11.0
 // @match              https://www.youtube.com/watch*
 // @match              https://www.youtube.com/channel/*/live
 // @match              https://gaming.youtube.com/watch*
@@ -84,6 +84,13 @@ class Message {
   isModerator() {
     return this.badgeType === 'moderator';
   }
+
+  /**
+   * ライブの配信者であればtrueを返す
+   */
+  isOwner() {
+    return this.badgeType === 'owner';
+  }
 }
 
 /**
@@ -142,7 +149,7 @@ class NotificationService {
    * @param {Message} message
    */
   notify(message) {
-    if (message.isModerator() || message.matchNameSome(this.authorNamePatterns)) {
+    if (message.isModerator() || message.isOwner() || message.matchNameSome(this.authorNamePatterns)) {
       NotificatonMessage
         .fromMessage(message)
         .notify();
