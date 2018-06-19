@@ -119,16 +119,54 @@ class NotificatonMessage {
   }
 }
 
+class NotifierGM {
+  notify(notificationMessage) {
+    GM.notification({
+      title: notificationMessage.title,
+      text: notificationMessage.body,
+      image: notificationMessage.iconUrl,
+    });
+  }
+
+  async requestPermission() {
+    return true;
+  }
+
+  supported() {
+    return 'GM' in window && 'notification' in window.GM;
+  }
+}
+
+class NotifierNotificationAPI {
+  notify(notificationMessage) {
+    new Notification(notificationMessage.title, {
+      body: notificationMessage.body,
+      icon: notificationMessage.iconUrl,
+    });
+  }
+
+  async requestPermission() {
+    const result = await Notification.requestPermission();
+
+    return result === 'granted';
+  }
+
+  supported() {
+    return 'Notification' in window;
+  }
+}
+
 /**
  * 通知に関する処理を置いておく Domain Service
  */
 class NotificationService {
   /**
+   * @param {Notifier}      notifier           通知を提供するサービス
    * @param {object}        notifySound        通知音を鳴らしてくれるような仕組みを持つオブジェクト
    * @param {array<RegExp>} authorNamePatterns 通知したいメッセージの著者の名前にマッチするパターンの配列
    */
-  constructor(notifySound, authorNamePatterns) {
-    Object.assign(this, { notifySound, authorNamePatterns });
+  constructor(notifier, notifySound, authorNamePatterns) {
+    Object.assign(this, { notifier, notifySound, authorNamePatterns });
   }
 
   /**
@@ -138,45 +176,18 @@ class NotificationService {
    */
   notify(message) {
     if (message.isModerator() || message.isOwner() || message.matchNameSome(this.authorNamePatterns)) {
-      NotificatonMessage
-        .fromMessage(message);
+      const notificationMessage = NotificatonMessage.fromMessage(message);
 
-      GM.notification(
-        this.body,
-        this.title || '',
-        this.iconUrl
-      );
-
+      this.notifier.notify(notificationMessage);
       this.notifySound.play();
     }
-  }
-
-  /**
-   * 通知方式がサポートされているならば、true を返す。
-   */
-  supported() {
-    return !! GM.notification;
-  }
-
-  /**
-   * 通知方式がサポートされて**いない**ならば、true を返す。
-   */
-  notSupported() {
-    return ! this.supported();
   }
 
   /**
    * 権限を要求する
    */
   async requestPermission() {
-    const result = await Notification.requestPermission();
-
-    if (result === 'granted') {
-      return true;
-    }
-
-    window.alert('Notification APIで通知の許可がありません。通知を受け取るには、通知を許可してください。');
-    return false;
+    return this.notifier.requestPermission();
   }
 }
 
@@ -197,15 +208,21 @@ async function main() {
     // あにまーれ
     /^(Ichika Channel \/ 宗谷 いちか 【あにまーれ】|Ran Channel \/ 日ノ隈らん 【あにまーれ】|Hinako Channel \/ 宇森ひなこ 【あにまーれ】|Kuromu Channel \/ 稲荷くろむ 【あにまーれ】|Haneru Channel \/ 因幡はねる 【あにまーれ】|AniMare Official \/ あにまーれ公式)$/
   ];
-  const notificationService = new NotificationService(notifySound, regexps);
 
-  if (notificationService.notSupported()) {
-    window.console.error('Notification がサポートされていません');
+  const notifier = [
+    new NotifierGM(),
+    new NotifierNotificationAPI(),
+  ].find(notifier => notifier.supported());
+
+  if (! notifier) {
+    window.alert('通知機能に対応していません');
     return;
   }
 
+  const notificationService = new NotificationService(notifier, notifySound, regexps);
+
   if (! await notificationService.requestPermission()) {
-    window.console.error('Notificatonの権限がありません');
+    window.alert('Notificatonの権限がありません');
     return;
   }
 
