@@ -196,7 +196,9 @@ async function main() {
     /^(Uka's room|ウェザーロイド Airi（ポン子）|文野環【 にじさんじ所属の野良猫 】 文野環【 にじさんじ所属の野良猫 】|Zombi-Ko Channel|Yuhi Riri Official|もちひよこ|ケリン|あっくん大魔王|Roboco Ch\. - ロボ子|Kanae Channel|伏見ガク【にじさんじ所属】|おめがシスターズ \[Ω Sisters\]|さはな【VTuber】|Akabane Channel|バーチャルYouTuber万楽えね|MeguRoom|Gilzaren III Season 1|ニーツちゃんねる|電脳少女シロGames|滓残|バーチャルゴリラ|DeepWebUnderground|Hibiki Ao|最果ての魔王ディープブリザード|みゅ みゅ|岩本町芸能社YouTube|春日部つくし|北上双葉|霊電カスカ|夜桜たま|ぱかチューブっ!|日雇礼子のドヤ街暮らしチャンネル|海月ねうmituki neu|Tsunohane Akagi Vtube|もこめめ\*channel|馬越健太郎チャンネル|カルロ ピノ|金剛いろは|小林幸子のさっちゃんねる|ちえり花京院|Kanata Hikari \/ LYTO【バーチャルYoutuber】|Hoonie friends|織田信姫|ミディ \/ 作曲バーチャルyoutuber|さょちゃんのVR図書室|虚拟DD|木曽あずき|バーチャル園児-めいちゃんねる|猫乃木もち|いるはーと|地獄ちゃんねる|ぜったい天使くるみちゃん|異世界転生系魔王ヘルネス|ねむちゃんねる【バーチャル美少女YouTuber】|八重沢なとり|ネコケン Nekoken世紀末系猫耳幼女バーチャルYouTuber|\/ ODDAIオッドアイ|Kuzuha Channel|ユキミお姉ちゃんねる|魔法少女ちあちあちゃんねる|牛巻 りこ|Channelパゲ美のバーチャルオカマ|珠根うたChannel|モスコミュール放送局|ico通夜の黄泉巡りch|poemcore tokyo|DOLL GAL millna|クゥChannel|あさひちゃん寝る【バーチャルYouTuber】|神楽すず|ヤマト イオリ|たかじんちゃんねる【バーチャルyoutuber】|ナイセンチャンネル naisen channel|天神 子兎音 Tenjin Kotone|スパイト-spite-【公式】|メイカちゃんねる|〜旅するバーチャルyoutuber〜動く城のフィオ|食虫植物TV -Carnivorous Plants videos-|イヌージョンCHANNEL|Arcadia L\.E\. Projectバリトンエルフ|かまってちゃんねる|あいえるちゃんねる\/株式会社インフィニットループ|リクビッツ \/ バーチャルYouTuber|\/食虫植物系VTuberネアちゃんねる|シテイルチャンネル|Reratan|デラとハドウ Channel|Channelれらたん|世界クルミ\/バーチャルYouTuber|白二郎\/VRアライグマ|Mel Channel 夜空メルチャンネル|ファイ博士φ電脳サイエンティスト|真空管ドールズ公式|2\.5次元バーチャルキャスター「獣音ロウ&式大元」チャンネル|ぼっちぼろまる|淫獣帝国|Kite Channel|すくろーるちゃんねる!!! ／ 巣黒るい)$/,
     /^(Kimino Yumeka Official|新川良|天野声太郎|Sophiaちゃんねる|人工知能AI ユニ|白鳥天羽【バーチャル百合お嬢様】|RAY WAKANA|ありしあちゃんねる|MIALチャンネル|クーテトラチャンネル|スズキセシル|バーチャルおじいちゃん \/ G3Games|ドットチャンネル\.\/DotChannel\.|星菜日向夏のゼロ時間目|魔王の息子わんわん|そらのももか|コハクのおうち|バーチャルYouTuber蟹|くのいち子バーチャルユーチューバー|姫宮縷愛|魔界四天王ださお|バーチャル美少女 ハラムちゃんねる)$/,
     // にじさんじ SEEDs
-    /^(海夜叉神|ドーラ|名伽尾アズマ☀️|出雲 霞|轟 京子|シスター・クレア|花畑チャイカ|社築|安土桃|D\.E\.放送局【鈴木勝】|緑仙channel|卯月コウ|八朔ゆず)$/
+    /^(海夜叉神|ドーラ|名伽尾アズマ☀️|出雲 霞|轟 京子|シスター・クレア|花畑チャイカ|社築|安土桃|D\.E\.放送局【鈴木勝】|緑仙channel|卯月コウ|八朔ゆず)$/,
+    // ホロライブ
+    /^(フブキCh。白上フブキ|Aki Channel アキ・ローゼンタール|Kurisu Channel 人見クリス|Haato Channel 赤井はあと|Matsuri Channel 夏色まつり)$/
   ];
   const notificationService = new NotificationService(notifySound, regexps);
 
