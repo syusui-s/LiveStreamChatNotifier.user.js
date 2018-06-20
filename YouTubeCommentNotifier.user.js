@@ -198,7 +198,9 @@ async function main() {
     // にじさんじ SEEDs
     /^(海夜叉神|ドーラ|名伽尾アズマ☀️|出雲 霞|轟 京子|シスター・クレア|花畑チャイカ|社築|安土桃|D\.E\.放送局【鈴木勝】|緑仙channel|卯月コウ|八朔ゆず)$/,
     // ホロライブ
-    /^(フブキCh。白上フブキ|Aki Channel アキ・ローゼンタール|Kurisu Channel 人見クリス|Haato Channel 赤井はあと|Matsuri Channel 夏色まつり)$/
+    /^(フブキCh。白上フブキ|Aki Channel アキ・ローゼンタール|Kurisu Channel 人見クリス|Haato Channel 赤井はあと|Matsuri Channel 夏色まつり)$/,
+    // あにまーれ
+    /^(Ichika Channel \/ 宗谷 いちか 【あにまーれ】|Ran Channel \/ 日ノ隈らん 【あにまーれ】|Hinako Channel \/ 宇森ひなこ 【あにまーれ】|Kuromu Channel \/ 稲荷くろむ 【あにまーれ】|Haneru Channel \/ 因幡はねる 【あにまーれ】|AniMare Official \/ あにまーれ公式)$/
   ];
   const notificationService = new NotificationService(notifySound, regexps);
 
