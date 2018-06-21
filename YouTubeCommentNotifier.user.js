@@ -2,7 +2,7 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            0.12.0
+// @version            0.13.0
 // @match              https://www.youtube.com/live_chat*
 // @match              https://gaming.youtube.com/live_chat*
 // @run-at             document-end
@@ -218,9 +218,7 @@ async function main() {
   const INTERVAL = 500; // ミリ秒
 
   const chatItemList = await retry(RETRY, INTERVAL, async () => {
-    const chatIframe   = document.querySelector('#chatframe');
-    const chatDocument = chatIframe ? chatIframe.contentDocument : document;
-    const chatItemList = chatDocument.querySelector('#items.yt-live-chat-item-list-renderer');
+    const chatItemList = document.querySelector('#items.yt-live-chat-item-list-renderer');
 
     return chatItemList;
   });
