@@ -16,6 +16,11 @@ VTuberがVTuberの配信でコメントすることが増えてきましたが�
 
 [インストール方法はこちらに記載しています](https://syusui-s.github.io/YouTubeCommentNotifier.user.js/)
 
+動作検証用動画
+-----
+* [【LIVE】しずりん、リネレボ2やってみるよ～♡【リネージュ2】 - YouTube](https://www.youtube.com/watch?v=_ZdAf1FbeYQ&feature=youtu.be&t=1h44s)
+	* でろーん（樋口楓）のコメントあり
+
 バグ報告・機能提案・プルリクエスト
 -----
 
