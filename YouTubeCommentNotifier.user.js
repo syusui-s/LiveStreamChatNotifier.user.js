@@ -8,6 +8,7 @@
 // @run-at             document-end
 // @downloadURL        https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/YouTubeCommentNotifier.user.js
 // @updateURL          https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/YouTubeCommentNotifier.user.js
+// @grant              GM.notification
 // ==/UserScript==
 
 /**
@@ -91,41 +92,42 @@ class Message {
   }
 }
 
-/**
- * 通知されるメッセージ
- */
-class NotificatonMessage {
-  /**
-   * メッセージから通知用のメッセージを生成する
-   *
-   * @param {Message} message メッセージ
-   */
-  static fromMessage(message) {
-    return new this(
-      message.author,
-      message.iconUrl,
-      message.body,
-    );
-  }
-
-  /**
-   * @param {string} title   通知のタイトル
-   * @param {string} iconUrl 通知のアイコン
-   * @param {string} body    通知の本文
-   */
-  constructor(title, iconUrl, body) {
-    Object.assign(this, { title, iconUrl, body });
-  }
-
-  /**
-   * Notification APIを用いて、通知する
-   */
-  async notify() {
-    // TODO  直接依存しない形にする
-    return new window.Notification(this.title || '', {
-      icon: this.iconUrl,
-      body: this.body,
+class NotifierGM {
+  notify(message) {
+    // HACK スパチャなどで本文が空の場合に備えて、各テキストに空白文字を追加している
+    // GM.notification は、textが空だと通知してくれないんですよね
+    GM.notification({
+      title: `${message.author} `,
+      text: `${message.body} `,
+      image: message.iconUrl,
     });
+  }
+
+  async requestPermission() {
+    return true;
+  }
+
+  supported() {
+    return 'GM' in window && 'notification' in window.GM;
+  }
+}
+
+class NotifierNotificationAPI {
+  notify(message) {
+    new Notification(message.author, {
+      body: message.body,
+      icon: message.iconUrl,
+    });
+  }
+
+  async requestPermission() {
+    const result = await Notification.requestPermission();
+
+    return result === 'granted';
+  }
+
+  supported() {
+    return 'Notification' in window;
   }
 }
 
@@ -134,11 +136,12 @@ class NotificatonMessage {
  */
 class NotificationService {
   /**
+   * @param {Notifier}      notifier           通知を提供するサービス
    * @param {object}        notifySound        通知音を鳴らしてくれるような仕組みを持つオブジェクト
    * @param {array<RegExp>} authorNamePatterns 通知したいメッセージの著者の名前にマッチするパターンの配列
    */
-  constructor(notifySound, authorNamePatterns) {
-    Object.assign(this, { notifySound, authorNamePatterns });
+  constructor(notifier, notifySound, authorNamePatterns) {
+    Object.assign(this, { notifier, notifySound, authorNamePatterns });
   }
 
   /**
@@ -148,40 +151,16 @@ class NotificationService {
    */
   notify(message) {
     if (message.isModerator() || message.isOwner() || message.matchNameSome(this.authorNamePatterns)) {
-      NotificatonMessage
-        .fromMessage(message)
-        .notify();
-
+      this.notifier.notify(message);
       this.notifySound.play();
     }
-  }
-
-  /**
-   * 通知方式がサポートされているならば、true を返す。
-   */
-  supported() {
-    return !! window.Notification;
-  }
-
-  /**
-   * 通知方式がサポートされて**いない**ならば、true を返す。
-   */
-  notSupported() {
-    return ! this.supported();
   }
 
   /**
    * 権限を要求する
    */
   async requestPermission() {
-    const result = await Notification.requestPermission();
-
-    if (result === 'granted') {
-      return true;
-    }
-
-    window.alert('Notification APIで通知の許可がありません。通知を受け取るには、通知を許可してください。');
-    return false;
+    return this.notifier.requestPermission();
   }
 }
 
@@ -202,15 +181,21 @@ async function main() {
     // あにまーれ
     /^(Ichika Channel \/ 宗谷 いちか 【あにまーれ】|Ran Channel \/ 日ノ隈らん 【あにまーれ】|Hinako Channel \/ 宇森ひなこ 【あにまーれ】|Kuromu Channel \/ 稲荷くろむ 【あにまーれ】|Haneru Channel \/ 因幡はねる 【あにまーれ】|AniMare Official \/ あにまーれ公式)$/
   ];
-  const notificationService = new NotificationService(notifySound, regexps);
 
-  if (notificationService.notSupported()) {
-    window.console.error('Notification がサポートされていません');
+  const notifier = [
+    new NotifierGM(),
+    new NotifierNotificationAPI(),
+  ].find(notifier => notifier.supported());
+
+  if (! notifier) {
+    window.alert('ブラウザが通知機能に対応していません。この拡張機能を利用できません。');
     return;
   }
 
+  const notificationService = new NotificationService(notifier, notifySound, regexps);
+
   if (! await notificationService.requestPermission()) {
-    window.console.error('Notificatonの権限がありません');
+    window.alert('Notificatonの権限がありません');
     return;
   }
 

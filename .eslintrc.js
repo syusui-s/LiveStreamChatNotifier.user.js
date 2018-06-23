@@ -3,6 +3,7 @@ module.exports = {
     "browser": true,
     "es6": true,
     "mocha": true,
+    "greasemonkey": true,
   },
   "extends": "eslint:recommended",
   "parserOptions": {
