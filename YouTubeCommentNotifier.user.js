@@ -2,7 +2,7 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            0.14.1
+// @version            0.14.2
 // @match              https://www.youtube.com/live_chat*
 // @match              https://gaming.youtube.com/live_chat*
 // @run-at             document-end
@@ -46,6 +46,22 @@ const notifySound = {
 };
 
 /**
+ * 内部実装としてMapを使うSet
+ */
+class MapSet {
+  constructor(...items) {
+    const map = new Map();
+    items.forEach(item => map.set(item, true));
+
+    this.map = map;
+  }
+
+  has(item) {
+    return this.map.has(item);
+  }
+}
+
+/**
  * ライブストリームに流れるメッセージ
  */
 class Message {
@@ -60,17 +76,13 @@ class Message {
   }
 
   /**
-   * メッセージの投稿者名に引数の文字列が一致するならtrueを返す
+   * メッセージの投稿者名が引数のMapSetに含まれているならtrueを返す
    *
-   * @param {string} name 投稿者名
-   * @return {boolean} 一致するかどうか
+   * @param {MapSet} names 投稿者名のMapSet
+   * @return {boolean} 含まれているかどうか
    */
-  hasName(name) {
-    return this.author === name;
-  }
-
   hasNameSome(names) {
-    return names.some(n => this.hasName(n));
+    return names.has(this.author);
   }
 
 
@@ -139,7 +151,7 @@ class NotificationService {
   /**
    * @param {Notifier}      notifier           通知を提供するサービス
    * @param {object}        notifySound        通知音を鳴らしてくれるような仕組みを持つオブジェクト
-   * @param {array<string>} authorNames        通知したい投稿者名の配列
+   * @param {MapSet}        authorNames        通知したい投稿者名の配列
    */
   constructor(notifier, notifySound, authorNames) {
     Object.assign(this, { notifier, notifySound, authorNames });
@@ -169,7 +181,7 @@ class NotificationService {
  *
  */
 async function main() {
-  const channels = [
+  const channels = new MapSet(
     'A.I.Channel', 'A.I.Games', 'Kaguya Luna Official', 'Mirai Akari Project', 'Siro Channel', 'ひなたチャンネル (Hinata Channel)', 'けもみみおーこく国営放送', '月ノ美兎', '萌実 & ヨメミ - Eilene', 'SoraCh. ときのそらチャンネル', '鳩羽つぐ', 'Shizuka Rin Official', '樋口楓【にじさんじ所属】', 'バーチャルおばあちゃんねる', 'Aoi ch.', 'ゲーム部プロジェクト', 'のらきゃっとチャンネル', '♥️♠️物述有栖♦️♣️', '【世界初?!】男性バーチャルYouTuber ばあちゃる', '薬袋カルテ - バーチャル診療所', 'エルフのえる【にじさんじ公式】', 'Azuma Lim Channel -アズマ リム-',
     'Mari Channel', '鈴鹿詩子', 'チャンネルコウノスケ', '剣持刀也【にじさんじ所属】', '《にじさんじ所属の女神》モイラ', 'Hacka Channel ハッカドール', 'ヒメ チャンネル', 'Official Mugi Ienaga', 'YUA/藤崎由愛', 'ピーナッツくん!オシャレになりたい!',
     '勇気ちひろ', 'Gengen Channel', '宇志海いちご', '乾ちゃんねる', '甲賀流忍者！ぽんぽこ', 'さなちゃんねる', 'Laki Station ラキステーション', 'ベイレーンチャンネル (Beilene Channel)', 'アキくんちゃんネル', '森中花咲', '渋谷ハジメのはじめ支部',
@@ -182,7 +194,7 @@ async function main() {
     'フブキCh。白上フブキ', 'Aki Channel アキ・ローゼンタール', 'Kurisu Channel 人見クリス', 'Haato Channel 赤井はあと', 'Matsuri Channel 夏色まつり',
     // あにまーれ
     'Ichika Channel / 宗谷 いちか 【あにまーれ】', 'Ran Channel / 日ノ隈らん 【あにまーれ】', 'Hinako Channel / 宇森ひなこ 【あにまーれ】', 'Kuromu Channel / 稲荷くろむ 【あにまーれ】', 'Haneru Channel / 因幡はねる 【あにまーれ】', 'AniMare Official / あにまーれ公式',
-  ];
+  );
 
   const notifier = [
     new NotifierGM(),
