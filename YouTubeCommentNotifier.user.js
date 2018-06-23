@@ -60,18 +60,19 @@ class Message {
   }
 
   /**
-   * メッセージの著者名に引数の正規表現が一致するならtrueを返す
+   * メッセージの投稿者名に引数の文字列が一致するならtrueを返す
    *
-   * @param {RegExp} regex 正規表現
+   * @param {string} name 投稿者名
    * @return {boolean} 一致するかどうか
    */
-  matchName(regex) {
-    return regex.test(this.author);
+  hasName(name) {
+    return this.author === name;
   }
 
-  matchNameSome(regexs) {
-    return regexs.some(r => this.matchName(r));
+  hasNameSome(names) {
+    return names.some(n => this.hasName(n));
   }
+
 
   /**
    * モデレータならばtrueを返す
@@ -138,10 +139,10 @@ class NotificationService {
   /**
    * @param {Notifier}      notifier           通知を提供するサービス
    * @param {object}        notifySound        通知音を鳴らしてくれるような仕組みを持つオブジェクト
-   * @param {array<RegExp>} authorNamePatterns 通知したいメッセージの著者の名前にマッチするパターンの配列
+   * @param {array<string>} authorNames        通知したい投稿者名の配列
    */
-  constructor(notifier, notifySound, authorNamePatterns) {
-    Object.assign(this, { notifier, notifySound, authorNamePatterns });
+  constructor(notifier, notifySound, authorNames) {
+    Object.assign(this, { notifier, notifySound, authorNames });
   }
 
   /**
@@ -150,7 +151,7 @@ class NotificationService {
    * @param {Message} message
    */
   notify(message) {
-    if (message.isModerator() || message.isOwner() || message.matchNameSome(this.authorNamePatterns)) {
+    if (message.isModerator() || message.isOwner() || message.hasNameSome(this.authorNames)) {
       this.notifier.notify(message);
       this.notifySound.play();
     }
@@ -168,18 +169,19 @@ class NotificationService {
  *
  */
 async function main() {
-  const regexps = [
-    /^(A\.I\.Channel|A\.I\.Games|Kaguya Luna Official|Mirai Akari Project|Siro Channel|ひなたチャンネル \(Hinata Channel\)|けもみみおーこく国営放送|月ノ美兎|萌実 & ヨメミ - Eilene|SoraCh\. ときのそらチャンネル|鳩羽つぐ|Shizuka Rin Official|樋口楓【にじさんじ所属】|バーチャルおばあちゃんねる|Aoi ch\.|ゲーム部プロジェクト|のらきゃっとチャンネル|♥️♠️物述有栖♦️♣️|【世界初\?!】男性バーチャルYouTuber ばあちゃる|薬袋カルテ - バーチャル診療所|エルフのえる【にじさんじ公式】|Azuma Lim Channel -アズマ リム-)$/,
-    /^(Mari Channel|鈴鹿詩子|チャンネルコウノスケ|剣持刀也【にじさんじ所属】|《にじさんじ所属の女神》モイラ|Hacka Channel ハッカドール|ヒメ チャンネル|Official Mugi Ienaga|YUA\/藤崎由愛|ピーナッツくん!オシャレになりたい!)$/,
-    /^(勇気ちひろ|Gengen Channel|宇志海いちご|乾ちゃんねる|甲賀流忍者！ぽんぽこ|さなちゃんねる|Laki Station ラキステーション|ベイレーンチャンネル \(Beilene Channel\)|アキくんちゃんネル|森中花咲|渋谷ハジメのはじめ支部)$/,
-    /^(Uka's room|ウェザーロイド Airi（ポン子）|文野環【 にじさんじ所属の野良猫 】 文野環【 にじさんじ所属の野良猫 】|Zombi-Ko Channel|Yuhi Riri Official|もちひよこ|ケリン|あっくん大魔王|Roboco Ch\. - ロボ子|Kanae Channel|伏見ガク【にじさんじ所属】|おめがシスターズ \[Ω Sisters\]|さはな【VTuber】|Akabane Channel|バーチャルYouTuber万楽えね|MeguRoom|Gilzaren III Season 1|ニーツちゃんねる|電脳少女シロGames|滓残|バーチャルゴリラ|DeepWebUnderground|Hibiki Ao|最果ての魔王ディープブリザード|みゅ みゅ|岩本町芸能社YouTube|春日部つくし|北上双葉|霊電カスカ|夜桜たま|ぱかチューブっ!|日雇礼子のドヤ街暮らしチャンネル|海月ねうmituki neu|Tsunohane Akagi Vtube|もこめめ\*channel|馬越健太郎チャンネル|カルロ ピノ|金剛いろは|小林幸子のさっちゃんねる|ちえり花京院|Kanata Hikari \/ LYTO【バーチャルYoutuber】|Hoonie friends|織田信姫|ミディ \/ 作曲バーチャルyoutuber|さょちゃんのVR図書室|虚拟DD|木曽あずき|バーチャル園児-めいちゃんねる|猫乃木もち|いるはーと|地獄ちゃんねる|ぜったい天使くるみちゃん|異世界転生系魔王ヘルネス|ねむちゃんねる【バーチャル美少女YouTuber】|八重沢なとり|ネコケン Nekoken世紀末系猫耳幼女バーチャルYouTuber|\/ ODDAIオッドアイ|Kuzuha Channel|ユキミお姉ちゃんねる|魔法少女ちあちあちゃんねる|牛巻 りこ|Channelパゲ美のバーチャルオカマ|珠根うたChannel|モスコミュール放送局|ico通夜の黄泉巡りch|poemcore tokyo|DOLL GAL millna|クゥChannel|あさひちゃん寝る【バーチャルYouTuber】|神楽すず|ヤマト イオリ|たかじんちゃんねる【バーチャルyoutuber】|ナイセンチャンネル naisen channel|天神 子兎音 Tenjin Kotone|スパイト-spite-【公式】|メイカちゃんねる|〜旅するバーチャルyoutuber〜動く城のフィオ|食虫植物TV -Carnivorous Plants videos-|イヌージョンCHANNEL|Arcadia L\.E\. Projectバリトンエルフ|かまってちゃんねる|あいえるちゃんねる\/株式会社インフィニットループ|リクビッツ \/ バーチャルYouTuber|\/食虫植物系VTuberネアちゃんねる|シテイルチャンネル|Reratan|デラとハドウ Channel|Channelれらたん|世界クルミ\/バーチャルYouTuber|白二郎\/VRアライグマ|Mel Channel 夜空メルチャンネル|ファイ博士φ電脳サイエンティスト|真空管ドールズ公式|2\.5次元バーチャルキャスター「獣音ロウ&式大元」チャンネル|ぼっちぼろまる|淫獣帝国|Kite Channel|すくろーるちゃんねる!!! ／ 巣黒るい)$/,
-    /^(Kimino Yumeka Official|新川良|天野声太郎|Sophiaちゃんねる|人工知能AI ユニ|白鳥天羽【バーチャル百合お嬢様】|RAY WAKANA|ありしあちゃんねる|MIALチャンネル|クーテトラチャンネル|スズキセシル|バーチャルおじいちゃん \/ G3Games|ドットチャンネル\.\/DotChannel\.|星菜日向夏のゼロ時間目|魔王の息子わんわん|そらのももか|コハクのおうち|バーチャルYouTuber蟹|くのいち子バーチャルユーチューバー|姫宮縷愛|魔界四天王ださお|バーチャル美少女 ハラムちゃんねる)$/,
+  const channels = [
+    'A.I.Channel', 'A.I.Games', 'Kaguya Luna Official', 'Mirai Akari Project', 'Siro Channel', 'ひなたチャンネル (Hinata Channel)', 'けもみみおーこく国営放送', '月ノ美兎', '萌実 & ヨメミ - Eilene', 'SoraCh. ときのそらチャンネル', '鳩羽つぐ', 'Shizuka Rin Official', '樋口楓【にじさんじ所属】', 'バーチャルおばあちゃんねる', 'Aoi ch.', 'ゲーム部プロジェクト', 'のらきゃっとチャンネル', '♥️♠️物述有栖♦️♣️', '【世界初?!】男性バーチャルYouTuber ばあちゃる', '薬袋カルテ - バーチャル診療所', 'エルフのえる【にじさんじ公式】', 'Azuma Lim Channel -アズマ リム-',
+    'Mari Channel', '鈴鹿詩子', 'チャンネルコウノスケ', '剣持刀也【にじさんじ所属】', '《にじさんじ所属の女神》モイラ', 'Hacka Channel ハッカドール', 'ヒメ チャンネル', 'Official Mugi Ienaga', 'YUA/藤崎由愛', 'ピーナッツくん!オシャレになりたい!',
+    '勇気ちひろ', 'Gengen Channel', '宇志海いちご', '乾ちゃんねる', '甲賀流忍者！ぽんぽこ', 'さなちゃんねる', 'Laki Station ラキステーション', 'ベイレーンチャンネル (Beilene Channel)', 'アキくんちゃんネル', '森中花咲', '渋谷ハジメのはじめ支部',
+    'Uka\'s room', 'ウェザーロイド Airi（ポン子）', '文野環【 にじさんじ所属の野良猫 】 文野環【 にじさんじ所属の野良猫 】', 'Zombi-Ko Channel', 'Yuhi Riri Official', 'もちひよこ', 'ケリン', 'あっくん大魔王', 'Roboco Ch. - ロボ子', 'Kanae Channel', '伏見ガク【にじさんじ所属】', 'おめがシスターズ [Ω Sister]', 'さはな【VTuber】', 'Akabane Channel', 'バーチャルYouTuber万楽えね', 'MeguRoom', 'Gilzaren III Season 1', 'ニーツちゃんねる', '電脳少女シロGames', '滓残', 'バーチャルゴリラ', 'DeepWebUnderground', 'Hibiki Ao', '最果ての魔王ディープブリザード', 'みゅ みゅ', '岩本町芸能社YouTube', '春日部つくし', '北上双葉', '霊電カスカ', '夜桜たま', 'ぱかチューブっ!', '日雇礼子のドヤ街暮らしチャンネル', '海月ねうmituki neu', 'Tsunohane Akagi Vtube', 'もこめめ*channel', '馬越健太郎チャンネル', 'カルロ ピノ', '金剛いろは', '小林幸子のさっちゃんねる', 'ちえり花京院', 'Kanata Hikari / LYTO【バーチャルYoutuber】', 'Hoonie friends', '織田信姫', 'ミディ / 作曲バーチャルyoutuber', 'さょちゃんのVR図書室', '虚拟DD', '木曽あずき', 'バーチャル園児-めいちゃんねる',
+    '猫乃木もち', 'いるはーと', '地獄ちゃんねる', 'ぜったい天使くるみちゃん', '異世界転生系魔王ヘルネス', 'ねむちゃんねる【バーチャル美少女YouTuber】', '八重沢なとり', 'ネコケン Nekoken世紀末系猫耳幼女バーチャルYouTuber', '/ ODDAIオッドアイ', 'Kuzuha Channel', 'ユキミお姉ちゃんねる', '魔法少女ちあちあちゃんねる', '牛巻 りこ', 'Channelパゲ美のバーチャルオカマ', '珠根うたChannel', 'モスコミュール放送局', 'ico通夜の黄泉巡りch', 'poemcore tokyo', 'DOLL GAL millna', 'クゥChannel', 'あさひちゃん寝る【バーチャルYouTuber】', '神楽すず', 'ヤマト イオリ', 'たかじんちゃんねる【バーチャルyoutuber】', 'ナイセンチャンネル naisen channel', '天神 子兎音 Tenjin Kotone', 'スパイト-spite-【公式】', 'メイカちゃんねる', '〜旅するバーチャルyoutuber〜動く城のフィオ', '食虫植物TV -Carnivorous Plants videos-', 'イヌージョンCHANNEL', 'Arcadia L.E. Projectバリトンエルフ', 'かまってちゃんねる', 'あいえるちゃんねる/株式会社インフィニットループ', 'リクビッツ / バーチャルYouTuber', '/食虫植物系VTuberネアちゃんねる', 'シテイルチャンネル', 'Reratan', 'デラとハドウ Channel', 'Channelれらたん', '世界クルミ/バーチャルYouTuber', '白二郎/VRアライグマ', 'Mel Channel 夜空メルチャンネル', 'ファイ博士φ電脳サイエンティスト', '真空管ドールズ公式',
+    '2.5次元バーチャルキャスター「獣音ロウ&式大元」チャンネル', 'ぼっちぼろまる', '淫獣帝国', 'Kite Channel', 'すくろーるちゃんねる!!! ／ 巣黒るい', 'Kimino Yumeka Official', '新川良', '天野声太郎', 'Sophiaちゃんねる', '人工知能AI ユニ', '白鳥天羽【バーチャル百合お嬢様】', 'RAY WAKANA', 'ありしあちゃんねる', 'MIALチャンネル', 'クーテトラチャンネル', 'スズキセシル', 'バーチャルおじいちゃん / G3Games', 'ドットチャンネル./DotChannel.', '星菜日向夏のゼロ時間目', '魔王の息子わんわん', 'そらのももか', 'コハクのおうち', 'バーチャルYouTuber蟹', 'くのいち子バーチャルユーチューバー', '姫宮縷愛', '魔界四天王ださお', 'バーチャル美少女 ハラムちゃんねる',
     // にじさんじ SEEDs
-    /^(海夜叉神|ドーラ|名伽尾アズマ☀️|出雲 霞|轟 京子|シスター・クレア|花畑チャイカ|社築|安土桃|D\.E\.放送局【鈴木勝】|緑仙channel|卯月コウ|八朔ゆず)$/,
+    '海夜叉神', 'ドーラ', '名伽尾アズマ☀️', '出雲 霞', '轟 京子', 'シスター・クレア', '花畑チャイカ', '社築', '安土桃', 'D.E.放送局【鈴木勝】', '緑仙channel', '卯月コウ', '八朔ゆず',
     // ホロライブ
-    /^(フブキCh。白上フブキ|Aki Channel アキ・ローゼンタール|Kurisu Channel 人見クリス|Haato Channel 赤井はあと|Matsuri Channel 夏色まつり)$/,
+    'フブキCh。白上フブキ', 'Aki Channel アキ・ローゼンタール', 'Kurisu Channel 人見クリス', 'Haato Channel 赤井はあと', 'Matsuri Channel 夏色まつり',
     // あにまーれ
-    /^(Ichika Channel \/ 宗谷 いちか 【あにまーれ】|Ran Channel \/ 日ノ隈らん 【あにまーれ】|Hinako Channel \/ 宇森ひなこ 【あにまーれ】|Kuromu Channel \/ 稲荷くろむ 【あにまーれ】|Haneru Channel \/ 因幡はねる 【あにまーれ】|AniMare Official \/ あにまーれ公式)$/
+    'Ichika Channel / 宗谷 いちか 【あにまーれ】', 'Ran Channel / 日ノ隈らん 【あにまーれ】', 'Hinako Channel / 宇森ひなこ 【あにまーれ】', 'Kuromu Channel / 稲荷くろむ 【あにまーれ】', 'Haneru Channel / 因幡はねる 【あにまーれ】', 'AniMare Official / あにまーれ公式',
   ];
 
   const notifier = [
@@ -192,7 +194,7 @@ async function main() {
     return;
   }
 
-  const notificationService = new NotificationService(notifier, notifySound, regexps);
+  const notificationService = new NotificationService(notifier, notifySound, channels);
 
   if (! await notificationService.requestPermission()) {
     window.alert('Notificatonの権限がありません');
