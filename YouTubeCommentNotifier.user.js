@@ -97,7 +97,7 @@ class NotifierGM {
     // HACK スパチャなどで本文が空の場合に備えて、各テキストに空白文字を追加している
     // GM.notification は、textが空だと通知してくれないんですよね
     GM.notification({
-      title: `${message.author} `,
+      title: message.author,
       text: `${message.body} `,
       image: message.iconUrl,
     });
@@ -202,14 +202,20 @@ async function main() {
   const RETRY    = 30;  // 回
   const INTERVAL = 500; // ミリ秒
 
-  const chatItemList = await retry(RETRY, INTERVAL, async () => {
-    const chatItemList = document.querySelector('#items.yt-live-chat-item-list-renderer');
-
-    return chatItemList;
-  });
+  const chatItemList = await retry(RETRY, INTERVAL, async () =>
+    document.querySelector('#items.yt-live-chat-item-list-renderer')
+  );
 
   if (! chatItemList)
     return;
+
+  const isEmoji = node =>
+    node instanceof Image && node.classList.contains('emoji');
+
+  const bodyElemToText = bodyElem =>
+    Array.from(bodyElem.childNodes)
+      .map(e => isEmoji(e) ? e.alt : e.textContent )
+      .join('');
 
   const toMessage = chatItem => {
     const nameElem  = chatItem.querySelector('#author-name');
@@ -219,7 +225,7 @@ async function main() {
     if (nameElem && iconElem) {
       const name      = nameElem.textContent;
       const iconUrl   = iconElem.src.replace(/[^/]*\/photo.jpg$/, '');
-      const body      = bodyElem.textContent;
+      const body      = bodyElemToText(bodyElem);
       const badgeType = nameElem.getAttribute('type');
 
       return new Message(name, iconUrl, badgeType, body);
