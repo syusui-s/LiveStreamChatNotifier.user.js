@@ -92,39 +92,14 @@ class Message {
   }
 }
 
-/**
- * 通知されるメッセージ
- */
-class NotificatonMessage {
-  /**
-   * メッセージから通知用のメッセージを生成する
-   *
-   * @param {Message} message メッセージ
-   */
-  static fromMessage(message) {
-    return new this(
-      message.author,
-      message.iconUrl,
-      message.body,
-    );
-  }
-
-  /**
-   * @param {string} title   通知のタイトル
-   * @param {string} iconUrl 通知のアイコン
-   * @param {string} body    通知の本文
-   */
-  constructor(title, iconUrl, body) {
-    Object.assign(this, { title, iconUrl, body });
-  }
-}
-
 class NotifierGM {
-  notify(notificationMessage) {
+  notify(message) {
+    // HACK スパチャなどで本文が空の場合に備えて、各テキストに空白文字を追加している
+    // GM.notification は、textが空だと通知してくれないんですよね
     GM.notification({
-      title: notificationMessage.title,
-      text: notificationMessage.body,
-      image: notificationMessage.iconUrl,
+      title: `${message.author} `,
+      text: `${message.body} `,
+      image: message.iconUrl,
     });
   }
 
@@ -138,10 +113,10 @@ class NotifierGM {
 }
 
 class NotifierNotificationAPI {
-  notify(notificationMessage) {
-    new Notification(notificationMessage.title, {
-      body: notificationMessage.body,
-      icon: notificationMessage.iconUrl,
+  notify(message) {
+    new Notification(message.author, {
+      body: message.body,
+      icon: message.iconUrl,
     });
   }
 
@@ -176,9 +151,7 @@ class NotificationService {
    */
   notify(message) {
     if (message.isModerator() || message.isOwner() || message.matchNameSome(this.authorNamePatterns)) {
-      const notificationMessage = NotificatonMessage.fromMessage(message);
-
-      this.notifier.notify(notificationMessage);
+      this.notifier.notify(message);
       this.notifySound.play();
     }
   }
@@ -215,7 +188,7 @@ async function main() {
   ].find(notifier => notifier.supported());
 
   if (! notifier) {
-    window.alert('通知機能に対応していません');
+    window.alert('ブラウザが通知機能に対応していません。この拡張機能を利用できません。');
     return;
   }
 
