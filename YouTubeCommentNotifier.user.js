@@ -60,9 +60,9 @@ class Message {
   }
 
   /**
-   * メッセージの著者名に引数の文字列が一致するならtrueを返す
+   * メッセージの投稿者名に引数の文字列が一致するならtrueを返す
    *
-   * @param {string} name 著者名
+   * @param {string} name 投稿者名
    * @return {boolean} 一致するかどうか
    */
   hasName(name) {
@@ -139,7 +139,7 @@ class NotificationService {
   /**
    * @param {Notifier}      notifier           通知を提供するサービス
    * @param {object}        notifySound        通知音を鳴らしてくれるような仕組みを持つオブジェクト
-   * @param {array<string>} authorNames        通知したいメッセージの著者の名前の配列
+   * @param {array<string>} authorNames        通知したい投稿者名の配列
    */
   constructor(notifier, notifySound, authorNames) {
     Object.assign(this, { notifier, notifySound, authorNames });
