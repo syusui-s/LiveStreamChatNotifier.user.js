@@ -51,12 +51,17 @@ const notifySound = {
 class Message {
   /**
    * @param {string}  author    投稿者名
+   * @param {string}  source    投稿のあった配信を表す文字列
    * @param {string}  iconUrl   投稿者のアイコン
    * @param {?string} badgeType 投稿者のバッジ
    * @param {string}  body      メッセージの本体
    */
-  constructor(author, iconUrl, badgeType, body) {
-    Object.assign(this, { author, iconUrl, badgeType, body, });
+  constructor(author, source, iconUrl, badgeType, body) {
+    Object.assign(this, { author, source, iconUrl, badgeType, body, });
+  }
+
+  get bodyWithSource() {
+    return `${this.body}\n\n【${this.source}】`;
   }
 
   /**
@@ -98,7 +103,7 @@ class NotifierGM {
     // GM.notification は、textが空だと通知してくれないんですよね
     GM.notification({
       title: message.author,
-      text: `${message.body} `,
+      text: message.bodyWithSource,
       image: message.iconUrl,
     });
   }
@@ -115,7 +120,7 @@ class NotifierGM {
 class NotifierNotificationAPI {
   notify(message) {
     new Notification(message.author, {
-      body: message.body,
+      body: message.bodyWithSource,
       icon: message.iconUrl,
     });
   }
@@ -209,12 +214,14 @@ async function main() {
   if (! chatItemList)
     return;
 
+  const source = window.parent.document.title;
+
   const isEmoji = node =>
     node instanceof Image && node.classList.contains('emoji');
 
   const bodyElemToText = bodyElem =>
     Array.from(bodyElem.childNodes)
-      .map(e => isEmoji(e) ? e.alt : e.textContent )
+      .map(e => isEmoji(e) ? e.alt : e.textContent)
       .join('');
 
   const toMessage = chatItem => {
@@ -228,7 +235,7 @@ async function main() {
       const body      = bodyElemToText(bodyElem);
       const badgeType = nameElem.getAttribute('type');
 
-      return new Message(name, iconUrl, badgeType, body);
+      return new Message(name, source, iconUrl, badgeType, body);
     }
   };
     
