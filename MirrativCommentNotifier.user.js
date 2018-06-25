@@ -1,13 +1,12 @@
 // ==UserScript==
-// @name               YouTubeCommentNotifier.user.js
-// @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
-// @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            0.14.2
-// @match              https://www.youtube.com/live_chat*
-// @match              https://gaming.youtube.com/live_chat*
+// @name               MirrativCommentNotifier.user.js
+// @description        Mirrativのライブチャットのストリームで特定のメッセージを通知してくれるやつ
+// @namespace          https://github.com/syusui-s/MirrativCommentNotifier.user.js
+// @version            1.0.0
+// @match              https://www.mirrativ.com/live/*
 // @run-at             document-end
-// @downloadURL        https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/YouTubeCommentNotifier.user.js
-// @updateURL          https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/YouTubeCommentNotifier.user.js
+// @downloadURL        https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/MirrativCommentNotifier.user.js
+// @updateURL          https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/MirrativCommentNotifier.user.js
 // @grant              GM.notification
 // ==/UserScript==
 
