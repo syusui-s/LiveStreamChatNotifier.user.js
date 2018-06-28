@@ -3,7 +3,8 @@
 // @description        Mirrativのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/MirrativCommentNotifier.user.js
 // @version            1.0.0
-// @match              https://www.mirrativ.com/live/*
+// @match              https://www.mirrativ.com
+// @match              https://www.mirrativ.com/*
 // @run-at             document-end
 // @downloadURL        https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/MirrativCommentNotifier.user.js
 // @updateURL          https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/MirrativCommentNotifier.user.js
@@ -142,7 +143,7 @@ class NotificationService {
    * @param {Message} message
    */
   notify(message) {
-    if (true || message.hasNameSome(this.authorNames)) {
+    if (message.hasNameSome(this.authorNames)) {
       this.notifier.notify(message);
       this.notifySound.play();
     }
@@ -272,17 +273,18 @@ class NormalMessageProvider extends MutationObserverMessageProvider {
 
 }
 
-class FullscreenMessageProvider {
+class FullscreenMessageProvider extends MutationObserverMessageProvider {
 
   async canProvide() {
     const RETRY    = 30;  // 回
     const INTERVAL = 500; // ミリ秒
 
-    const comment = await retry(RETRY, INTERVAL, async () => undefined 
-      // ここ
+    const commentNode = await retry(RETRY, INTERVAL, async () =>
+      // HACK ユーザ名のスタイルにマッチさせている
+      document.querySelector('a[class^="_"][href^="/user/"][style]:nth-child(2)')
     );
 
-    return !!comment;
+    return !! commentNode;
   }
 
   get observeTarget() {
@@ -348,8 +350,22 @@ async function main() {
     new NormalMessageProvider(),
     new FullscreenMessageProvider(),
   ]);
-
-  console.log(provider)
+  
+  // 配信ページへの遷移、フルスクリーンの切替時に main() を再実行する
+  const root = document.querySelector('#app > div[data-reactroot]');
+  const livePageObserver = new MutationObserver(records =>
+    records.forEach(record => {
+      if (
+        record.type === 'childList' &&
+        Array.from(record.addedNodes).some(node => node.attributes['data-is-live'])
+      ) {
+        provider.stop();
+        livePageObserver.disconnect();
+        main();
+      }
+    })
+  );
+  livePageObserver.observe(root, { childList: true });
 
   if (! provider)
     return;
@@ -363,27 +379,6 @@ async function main() {
   provider.addListener(message => 
     notificationService.notify(message)
   );
-  
-  // フルスクリーン切替時に再実行
-  const fullscreenButton =
-    document.querySelector('.mrHeader + div > div:nth-child(1) > div:nth-child(3) > div:nth-child(2) > div:nth-child(3)');
-
-  if (fullscreenButton)
-    fullscreenButton.addEventListener('click', () => {
-      provider.stop();
-      console.log('normar -> full');
-      main();
-    });
-
-  const fullscreenButtonWhenFullScreen =
-    document.querySelector('.mrHeader + div header > div > div:nth-child(3)');
-
-  if (fullscreenButtonWhenFullScreen)
-    fullscreenButtonWhenFullScreen.addEventListener('click', () => {
-      provider.stop();
-      console.log('full -> normal');
-      main();
-    });
 
 }
 
