@@ -142,7 +142,7 @@ class NotificationService {
    * @param {Message} message
    */
   notify(message) {
-    if (message.hasNameSome(this.authorNames)) {
+    if (true || message.hasNameSome(this.authorNames)) {
       this.notifier.notify(message);
       this.notifySound.play();
     }
@@ -153,6 +153,154 @@ class NotificationService {
    */
   async requestPermission() {
     return this.notifier.requestPermission();
+  }
+}
+
+class MessageProvider {
+
+  /**
+   * 引数のメッセージプロバイダからプロバイド可能なものを返す。
+   * 注意: タイムアウトは各プロバイダの canProvide の実装に依存する。
+   */
+  static async selectProvider(providers) {
+    return Promise.race(providers.map(async provider =>
+      await provider.canProvide() ? provider : undefined
+    ));
+  }
+
+  constructor() {
+    Object.assign(this, {
+      listeners: []
+    });
+  }
+
+  addListener(listener) {
+    this.listeners.push(listener);
+  }
+
+  provideMessage(message) {
+    this.listeners.forEach(listener =>
+      listener(message)
+    );
+  }
+
+  async canProvide() {
+    throw new Error('NotImplemented');
+  }
+
+  start() {
+    throw new Error('NotImplemented');
+  }
+
+  stop() {
+    throw new Error('NotImplemented');
+  }
+
+}
+
+class MutationObserverMessageProvider extends MessageProvider {
+
+  start() {
+    if (this.observer)
+      return;
+
+    const observer = records => {
+      records.forEach(record => {
+        switch (record.type) {
+        case 'childList':
+          record.addedNodes && record.addedNodes.forEach(chatItem => {
+            const messageOpt = this.parseMessage(chatItem);
+            if (messageOpt)
+              this.provideMessage(messageOpt);
+          });
+          break;
+        }
+      });
+    };
+
+    const m = new MutationObserver(observer);
+    m.observe(this.observeTarget, { childList: true, subtree: true });
+
+    this.observer = m;
+  }
+
+  stop() {
+    if (this.observer)
+      this.observer.disconnect();
+  }
+
+  parseMessage() {
+    throw new Error('NotImplemented');
+  }
+
+  get observeTarget() {
+    throw new Error('NotImplemented');
+  }
+
+}
+
+class NormalMessageProvider extends MutationObserverMessageProvider {
+
+  async canProvide() {
+    const RETRY    = 30;  // 回
+    const INTERVAL = 500; // ミリ秒
+
+    const commentNode = await retry(RETRY, INTERVAL, async () =>
+      document.querySelector('[id^="comment-"]')
+    );
+
+    return !! commentNode;
+  }
+
+  get observeTarget() {
+    return document.querySelector('.mrHeader').nextSibling;
+  }
+
+  parseMessage(chatItem) {
+    const nameElem  = chatItem.querySelector('a[class^="_"][href^="/user/"]');
+    const iconElem  = chatItem.querySelector('div[style]');
+    const bodyElem  = chatItem.querySelector('span');
+
+    if (nameElem && iconElem) {
+      const name    = nameElem.textContent;
+      const iconUrl = iconElem.style.backgroundImage.replace(/^url\("/, '').replace(/"\)$/, '');
+      const body    = bodyElem.textContent;
+
+      return new Message(name, iconUrl, body);
+    }
+  }
+
+}
+
+class FullscreenMessageProvider {
+
+  async canProvide() {
+    const RETRY    = 30;  // 回
+    const INTERVAL = 500; // ミリ秒
+
+    const comment = await retry(RETRY, INTERVAL, async () => undefined 
+      // ここ
+    );
+
+    return !!comment;
+  }
+
+  get observeTarget() {
+    return document.querySelector('.mrHeader').nextSibling;
+  }
+
+  parseMessage(chatItem) {
+    const nameElem  = chatItem.querySelector('div:nth-child(2) > div:nth-child(1)');
+    const bodyElem  = chatItem.querySelector('div:nth-child(2) > div:nth-child(2)');
+    const iconElem  = chatItem.querySelector('div[style]');
+  
+    if (nameElem && iconElem) {
+      const name    = nameElem.textContent;
+      const iconUrl = iconElem.style.backgroundImage.replace(/^url\("/, '').replace(/"\)$/, '');
+      const body    = bodyElem.textContent;
+
+      return new Message(name, iconUrl, body);
+    }
   }
 }
 
@@ -196,14 +344,14 @@ async function main() {
     return;
   }
 
-  const RETRY    = 30;  // 回
-  const INTERVAL = 500; // ミリ秒
+  const provider = await MessageProvider.selectProvider([
+    new NormalMessageProvider(),
+    new FullscreenMessageProvider(),
+  ]);
 
-  const comment = await retry(RETRY, INTERVAL, async () =>
-    document.querySelector('[id^="comment-"]')
-  );
+  console.log(provider)
 
-  if (! comment)
+  if (! provider)
     return;
 
   const chatItemList = document.querySelector('.mrHeader').nextSibling;
@@ -211,38 +359,32 @@ async function main() {
   if (! chatItemList)
     return;
 
-  const toMessage = chatItem => {
-    const nameElem  = chatItem.querySelector('a[class^="_"][href^="/user/"]');
-    const iconElem  = chatItem.querySelector('div[style]');
-    const bodyElem  = chatItem.querySelector('span');
+  provider.start();
+  provider.addListener(message => 
+    notificationService.notify(message)
+  );
+  
+  // フルスクリーン切替時に再実行
+  const fullscreenButton =
+    document.querySelector('.mrHeader + div > div:nth-child(1) > div:nth-child(3) > div:nth-child(2) > div:nth-child(3)');
 
-    if (nameElem && iconElem) {
-      const name      = nameElem.textContent;
-      const iconUrl   = iconElem.style.backgroundImage.replace(/url\("/, '').replace(/"\)$/, '');
-      const body      = bodyElem.textContent;
-
-      return new Message(name, iconUrl, body);
-    }
-  };
-    
-  const observer = records => {
-    records.forEach(record => {
-      switch (record.type) {
-      case 'childList':
-        record.addedNodes && record.addedNodes.forEach(chatItem => {
-          const messageOpt = toMessage(chatItem);
-          if (messageOpt)
-            notificationService.notify(messageOpt);
-        });
-        break;
-      }
+  if (fullscreenButton)
+    fullscreenButton.addEventListener('click', () => {
+      provider.stop();
+      console.log('normar -> full');
+      main();
     });
-  };
 
-  const m = new MutationObserver(observer);
-  m.observe(chatItemList, { childList: true, subtree: true });
+  const fullscreenButtonWhenFullScreen =
+    document.querySelector('.mrHeader + div header > div > div:nth-child(3)');
 
-  return m;
+  if (fullscreenButtonWhenFullScreen)
+    fullscreenButtonWhenFullScreen.addEventListener('click', () => {
+      provider.stop();
+      console.log('full -> normal');
+      main();
+    });
+
 }
 
 main();
