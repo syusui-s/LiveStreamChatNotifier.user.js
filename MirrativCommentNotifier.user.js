@@ -2,7 +2,7 @@
 // @name               MirrativCommentNotifier.user.js
 // @description        Mirrativのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/MirrativCommentNotifier.user.js
-// @version            1.0.0
+// @version            1.1.0
 // @match              https://www.mirrativ.com
 // @match              https://www.mirrativ.com/*
 // @run-at             document-end
