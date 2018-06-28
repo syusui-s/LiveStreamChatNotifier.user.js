@@ -2,8 +2,9 @@
 // @name               MirrativCommentNotifier.user.js
 // @description        Mirrativのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/MirrativCommentNotifier.user.js
-// @version            1.0.0
-// @match              https://www.mirrativ.com/live/*
+// @version            1.1.0
+// @match              https://www.mirrativ.com
+// @match              https://www.mirrativ.com/*
 // @run-at             document-end
 // @downloadURL        https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/MirrativCommentNotifier.user.js
 // @updateURL          https://github.com/syusui-s/YouTubeCommentNotifier.user.js/raw/master/MirrativCommentNotifier.user.js
@@ -157,6 +158,224 @@ class NotificationService {
 }
 
 /**
+ * メッセージプロバイダ
+ *
+ * メッセージを提供する仕組みを抽象化する基底クラス
+ * この基底クラスは、メッセージのリスナーを登録する仕組みのみを提供する。
+ * サブクラスは、canProvide、start、stopを適切に実装しなければならない。
+ */
+class MessageProvider {
+
+  /**
+   * 引数のメッセージプロバイダからプロバイド可能なものを返す。
+   * 注意: タイムアウトは各プロバイダの canProvide の実装に依存する。
+   *
+   * @return 利用可能なプロバイダ または undefined を返すPromise
+   */
+  static async selectProvider(providers) {
+    return Promise.race(providers.map(async provider =>
+      await provider.canProvide() ? provider : undefined
+    ));
+  }
+
+  constructor() {
+    Object.assign(this, {
+      listeners: []
+    });
+  }
+
+  /**
+   * メッセージをリッスンする関数を登録する。
+   *
+   * 関数は新しいメッセージが見つかった場合に、
+   * そのメッセージを引数として呼び出されるようになる。
+   *
+   * @param {function} listener メッセージを受け取る関数
+   */
+  addListener(listener) {
+    this.listeners.push(listener);
+  }
+
+  /**
+   * リスナーにメッセージを通知する
+   * 注: 内部的に用いる関数なので、外部から呼び出さないこと
+   */
+  provideMessage(message) {
+    this.listeners.forEach(listener =>
+      listener(message)
+    );
+  }
+
+  /**
+   * プロバイダがメッセージを提供できる場合にtrueを返す
+   *
+   * @return {Promise} メッセージを提供できる場合に true を resolve するPromise
+   */
+  async canProvide() {
+    throw new Error('NotImplemented');
+  }
+
+  /**
+   * メッセージの提供を開始する
+   * 
+   * この関数は次のような動作を行うことが期待される:
+   * 方法は問わないが、例えば追加されるDOMノードを監視するなどの
+   * 方法を用いて、新しいメッセージの監視を行う。
+   * 新しいメッセージが見つかれば、そのメッセージを provideMessage により
+   * リスナーに通知する。
+   */
+  start() {
+    throw new Error('NotImplemented');
+  }
+
+  /**
+   * メッセージの提供を終了する
+   *
+   * この関数は次のような動作を行うことが期待される:
+   * startにより行われていた新しいメッセージの監視を停止し、
+   * メッセージを通知することをやめる。
+   */
+  stop() {
+    throw new Error('NotImplemented');
+  }
+
+}
+
+/**
+ * MutationObserverを用いたメッセージプロバイダ
+ *
+ * MutationObserverを用いて、
+ * 監視対象のDOMの子要素（サブツリーを含む）に対するDOMの挿入を監視して、
+ * 変更があった場合に parseMessage を用いて、メッセージへの変換を試みる。
+ * もし、メッセージへの変換に成功すれば、メッセージをリスナーに通知する。
+ *
+ * サブクラスは、parseMessage、get observeTarget を適切に実装しなければならない。
+ */
+class MutationObserverMessageProvider extends MessageProvider {
+
+  start() {
+    if (this.observer)
+      return;
+
+    const observer = records => {
+      records.forEach(record => {
+        switch (record.type) {
+        case 'childList':
+          record.addedNodes && record.addedNodes.forEach(chatItem => {
+            const messageOpt = this.parseMessage(chatItem);
+            if (messageOpt)
+              this.provideMessage(messageOpt);
+          });
+          break;
+        }
+      });
+    };
+
+    const m = new MutationObserver(observer);
+    m.observe(this.observeTarget, { childList: true, subtree: true });
+
+    this.observer = m;
+  }
+
+  stop() {
+    if (this.observer)
+      this.observer.disconnect();
+  }
+
+  /**
+   * 引数のDOMノードをメッセージに変換する
+   *
+   * @param {HTMLElement} メッセージに変換したいDOMノード
+   * @return {?Message} メッセージ。変換に失敗した場合は null を返す。
+   */
+  parseMessage() {
+    throw new Error('NotImplemented');
+  }
+
+  /**
+   * 監視対象のDOMノードを返す
+   *
+   * @param {HTMLElement} 監視対象のDOMノード
+   */
+  get observeTarget() {
+    throw new Error('NotImplemented');
+  }
+
+}
+
+/**
+ * 通常表示時のメッセージプロバイダ
+ */
+class NormalMessageProvider extends MutationObserverMessageProvider {
+
+  async canProvide() {
+    const RETRY    = 30;  // 回
+    const INTERVAL = 500; // ミリ秒
+
+    const commentNode = await retry(RETRY, INTERVAL, async () =>
+      document.querySelector('[id^="comment-"]')
+    );
+
+    return !! commentNode;
+  }
+
+  get observeTarget() {
+    return document.querySelector('.mrHeader').nextSibling;
+  }
+
+  parseMessage(chatItem) {
+    const nameElem  = chatItem.querySelector('a[class^="_"][href^="/user/"]');
+    const iconElem  = chatItem.querySelector('div[style]');
+    const bodyElem  = chatItem.querySelector('span');
+
+    if (nameElem && iconElem) {
+      const name    = nameElem.textContent;
+      const iconUrl = iconElem.style.backgroundImage.replace(/^url\("/, '').replace(/"\)$/, '');
+      const body    = bodyElem.textContent;
+
+      return new Message(name, iconUrl, body);
+    }
+  }
+
+}
+
+/**
+ * フルスクリーン表示時のメッセージプロバイダ
+ */
+class FullscreenMessageProvider extends MutationObserverMessageProvider {
+
+  async canProvide() {
+    const RETRY    = 30;  // 回
+    const INTERVAL = 500; // ミリ秒
+
+    const commentNode = await retry(RETRY, INTERVAL, async () =>
+      // HACK ユーザ名のスタイルにマッチさせている
+      document.querySelector('a[class^="_"][href^="/user/"][style]:nth-child(2)')
+    );
+
+    return !! commentNode;
+  }
+
+  get observeTarget() {
+    return document.querySelector('.mrHeader').nextSibling;
+  }
+
+  parseMessage(chatItem) {
+    const nameElem  = chatItem.querySelector('div:nth-child(2) > div:nth-child(1)');
+    const bodyElem  = chatItem.querySelector('div:nth-child(2) > div:nth-child(2)');
+    const iconElem  = chatItem.querySelector('div[style]');
+  
+    if (nameElem && iconElem) {
+      const name    = nameElem.textContent;
+      const iconUrl = iconElem.style.backgroundImage.replace(/^url\("/, '').replace(/"\)$/, '');
+      const body    = bodyElem.textContent;
+
+      return new Message(name, iconUrl, body);
+    }
+  }
+}
+
+/**
  *
  */
 async function main() {
@@ -196,14 +415,28 @@ async function main() {
     return;
   }
 
-  const RETRY    = 30;  // 回
-  const INTERVAL = 500; // ミリ秒
-
-  const comment = await retry(RETRY, INTERVAL, async () =>
-    document.querySelector('[id^="comment-"]')
+  const provider = await MessageProvider.selectProvider([
+    new NormalMessageProvider(),
+    new FullscreenMessageProvider(),
+  ]);
+  
+  // 配信ページへの遷移、フルスクリーンの切替時に main() を再実行する
+  const root = document.querySelector('#app > div[data-reactroot]');
+  const livePageObserver = new MutationObserver(records =>
+    records.forEach(record => {
+      if (
+        record.type === 'childList' &&
+        Array.from(record.addedNodes).some(node => node.attributes['data-is-live'])
+      ) {
+        provider.stop();
+        livePageObserver.disconnect();
+        main();
+      }
+    })
   );
+  livePageObserver.observe(root, { childList: true });
 
-  if (! comment)
+  if (! provider)
     return;
 
   const chatItemList = document.querySelector('.mrHeader').nextSibling;
@@ -211,38 +444,11 @@ async function main() {
   if (! chatItemList)
     return;
 
-  const toMessage = chatItem => {
-    const nameElem  = chatItem.querySelector('a[class^="_"][href^="/user/"]');
-    const iconElem  = chatItem.querySelector('div[style]');
-    const bodyElem  = chatItem.querySelector('span');
+  provider.start();
+  provider.addListener(message => 
+    notificationService.notify(message)
+  );
 
-    if (nameElem && iconElem) {
-      const name      = nameElem.textContent;
-      const iconUrl   = iconElem.style.backgroundImage.replace(/url\("/, '').replace(/"\)$/, '');
-      const body      = bodyElem.textContent;
-
-      return new Message(name, iconUrl, body);
-    }
-  };
-    
-  const observer = records => {
-    records.forEach(record => {
-      switch (record.type) {
-      case 'childList':
-        record.addedNodes && record.addedNodes.forEach(chatItem => {
-          const messageOpt = toMessage(chatItem);
-          if (messageOpt)
-            notificationService.notify(messageOpt);
-        });
-        break;
-      }
-    });
-  };
-
-  const m = new MutationObserver(observer);
-  m.observe(chatItemList, { childList: true, subtree: true });
-
-  return m;
 }
 
 main();
