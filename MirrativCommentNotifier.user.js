@@ -157,11 +157,20 @@ class NotificationService {
   }
 }
 
+/**
+ * メッセージプロバイダ
+ *
+ * メッセージを提供する仕組みを抽象化する基底クラス
+ * この基底クラスは、メッセージのリスナーを登録する仕組みのみを提供する。
+ * サブクラスは、canProvide、start、stopを適切に実装しなければならない。
+ */
 class MessageProvider {
 
   /**
    * 引数のメッセージプロバイダからプロバイド可能なものを返す。
    * 注意: タイムアウトは各プロバイダの canProvide の実装に依存する。
+   *
+   * @return 利用可能なプロバイダ または undefined を返すPromise
    */
   static async selectProvider(providers) {
     return Promise.race(providers.map(async provider =>
@@ -175,30 +184,73 @@ class MessageProvider {
     });
   }
 
+  /**
+   * メッセージをリッスンする関数を登録する。
+   *
+   * 関数は新しいメッセージが見つかった場合に、
+   * そのメッセージを引数として呼び出されるようになる。
+   *
+   * @param {function} listener メッセージを受け取る関数
+   */
   addListener(listener) {
     this.listeners.push(listener);
   }
 
+  /**
+   * リスナーにメッセージを通知する
+   * 注: 内部的に用いる関数なので、外部から呼び出さないこと
+   */
   provideMessage(message) {
     this.listeners.forEach(listener =>
       listener(message)
     );
   }
 
+  /**
+   * プロバイダがメッセージを提供できる場合にtrueを返す
+   *
+   * @return {Promise} メッセージを提供できる場合に true を resolve するPromise
+   */
   async canProvide() {
     throw new Error('NotImplemented');
   }
 
+  /**
+   * メッセージの提供を開始する
+   * 
+   * この関数は次のような動作を行うことが期待される:
+   * 方法は問わないが、例えば追加されるDOMノードを監視するなどの
+   * 方法を用いて、新しいメッセージの監視を行う。
+   * 新しいメッセージが見つかれば、そのメッセージを provideMessage により
+   * リスナーに通知する。
+   */
   start() {
     throw new Error('NotImplemented');
   }
 
+  /**
+   * メッセージの提供を終了する
+   *
+   * この関数は次のような動作を行うことが期待される:
+   * startにより行われていた新しいメッセージの監視を停止し、
+   * メッセージを通知することをやめる。
+   */
   stop() {
     throw new Error('NotImplemented');
   }
 
 }
 
+/**
+ * MutationObserverを用いたメッセージプロバイダ
+ *
+ * MutationObserverを用いて、
+ * 監視対象のDOMの子要素（サブツリーを含む）に対するDOMの挿入を監視して、
+ * 変更があった場合に parseMessage を用いて、メッセージへの変換を試みる。
+ * もし、メッセージへの変換に成功すれば、メッセージをリスナーに通知する。
+ *
+ * サブクラスは、parseMessage、get observeTarget を適切に実装しなければならない。
+ */
 class MutationObserverMessageProvider extends MessageProvider {
 
   start() {
@@ -230,16 +282,30 @@ class MutationObserverMessageProvider extends MessageProvider {
       this.observer.disconnect();
   }
 
+  /**
+   * 引数のDOMノードをメッセージに変換する
+   *
+   * @param {HTMLElement} メッセージに変換したいDOMノード
+   * @return {?Message} メッセージ。変換に失敗した場合は null を返す。
+   */
   parseMessage() {
     throw new Error('NotImplemented');
   }
 
+  /**
+   * 監視対象のDOMノードを返す
+   *
+   * @param {HTMLElement} 監視対象のDOMノード
+   */
   get observeTarget() {
     throw new Error('NotImplemented');
   }
 
 }
 
+/**
+ * 通常表示時のメッセージプロバイダ
+ */
 class NormalMessageProvider extends MutationObserverMessageProvider {
 
   async canProvide() {
@@ -273,6 +339,9 @@ class NormalMessageProvider extends MutationObserverMessageProvider {
 
 }
 
+/**
+ * フルスクリーン表示時のメッセージプロバイダ
+ */
 class FullscreenMessageProvider extends MutationObserverMessageProvider {
 
   async canProvide() {
