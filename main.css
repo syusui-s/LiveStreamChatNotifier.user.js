@@ -128,7 +128,7 @@ img.screenshot {
 	margin: auto;
 }
 
-a.button {
+.button {
 	display: inline-block;
 	margin-bottom: 10px;
 	padding: 0.5rem 1.25rem;
@@ -141,12 +141,16 @@ a.button {
 	vertical-align: middle;
 }
 
-a.button:hover {
-	animation: button_hover 0.2s ease;
-	background: #ae5;
+.button--youtube {
+	background: #f7503f;
 }
 
-@keyframes button_hover {
-	0%   { background: #8d3; }
-	100% { background: #ae5; }
+.button--mirrativ {
+	background: #1fc5be;
 }
+
+.button:hover {
+	transition: 0.2s all;
+	filter: brightness(1.1) hue-rotate(-5deg);
+}
+
