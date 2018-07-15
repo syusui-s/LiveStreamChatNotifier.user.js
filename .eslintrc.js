@@ -27,6 +27,7 @@ module.exports = {
       "error",
       "always"
     ],
+    "eqeqeq": ["error", "always"],
     "arrow-body-style": "error",
     "arrow-parens": ["error", "as-needed"],
     "arrow-spacing": "error",
