@@ -32,6 +32,7 @@ class RemoteStorage {
     iframe.src = storageUrl;
     iframe.height = '0';
     iframe.width  = '0';
+    window.document.body.appendChild(iframe);
 
     Object.assign(this, { iframe, storageUrl, storageOrigin: new URL(storageUrl).origin, });
   }
