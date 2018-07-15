@@ -10,7 +10,7 @@ window.addEventListener('message', event => {
   if (! acceptableOrigins.includes(event.origin))
     return;
 
-  const { data, source }  = event;
+  const { data, origin, source } = event;
   const { requestId, type, payload } = JSON.parse(data);
 
   switch (type) {
@@ -21,7 +21,7 @@ window.addEventListener('message', event => {
       source.postMessage(JSON.stringify({
         requestId,
         type: 'OK',
-      }), source.origin);
+      }), origin);
     }
     break;
 
@@ -33,7 +33,7 @@ window.addEventListener('message', event => {
         requestId,
         type: 'OK',
         payload: { value },
-      }), source.origin);
+      }), origin);
     }
     break;
 
