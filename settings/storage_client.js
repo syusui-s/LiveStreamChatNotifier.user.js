@@ -48,8 +48,13 @@ class RemoteStorage {
     this.iframe.contentWindow.postMessage(message, this.storageOrigin);
 
     const { type, payload } = await this.listen(requestId);
-    if (type === 'OK')
+
+    switch (type) {
+    case 'OK':
       return payload.value;
+    default:
+      throw new TypeError(`Unknown type '${type}'`);
+    }
   }
 
   async setItem(key, value) {
@@ -61,9 +66,14 @@ class RemoteStorage {
 
     this.iframe.contentWindow.postMessage(message, this.storageOrigin);
 
-    const { type, payload } = await this.listen(requestId);
-    if (type === 'OK')
-      return payload.value;
+    const { type } = await this.listen(requestId);
+
+    switch (type) {
+    case 'OK':
+      return;
+    default:
+      throw new TypeError(`Unknown type '${type}'`);
+    }
   }
 
 }
