@@ -21,7 +21,7 @@ window.addEventListener('message', event => {
       source.postMessage(JSON.stringify({
         requestId,
         type: 'OK',
-      }));
+      }), source.origin);
     }
     break;
 
@@ -33,7 +33,7 @@ window.addEventListener('message', event => {
         requestId,
         type: 'OK',
         payload: { value },
-      }));
+      }), source.origin);
     }
     break;
 
