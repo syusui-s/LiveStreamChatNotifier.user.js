@@ -6,8 +6,17 @@ class RemoteStorage {
     storageOrigin: string
   */
 
-  async listen(expectedRequestId) {
-    return new Promise(resolve => {
+  async request(message/* : { type: string, payload: {} } */, timeout = 5000) {
+    const requestId = Math.random();
+    const messageStr = JSON.stringify({ ...message, requestId });
+
+    this.iframe.contentWindow.postMessage(messageStr, this.storageOrigin);
+
+    return this.listen(requestId, timeout);
+  }
+
+  async listen(expectedRequestId, timeout) {
+    return new Promise((resolve, reject) => {
       const listener = event => {
         if (event.origin !== this.storageOrigin)
           return;
@@ -20,6 +29,11 @@ class RemoteStorage {
         resolve(data);
         window.removeEventListener('message', listener);
       };
+
+      setTimeout(() => {
+        reject({ type: 'LOCAL_TIMEOUT' });
+        window.removeEventListener('message', listener);
+      }, timeout);
 
       window.addEventListener('message', listener, false);
     });
@@ -38,16 +52,10 @@ class RemoteStorage {
   }
 
   async getItem(key) {
-    const requestId = Math.random();
-    const message = JSON.stringify({
-      requestId,
+    const { type, payload } = await this.request({
       type: 'GET_ITEM',
       payload: { key },
     });
-
-    this.iframe.contentWindow.postMessage(message, this.storageOrigin);
-
-    const { type, payload } = await this.listen(requestId);
 
     switch (type) {
     case 'OK':
@@ -58,15 +66,10 @@ class RemoteStorage {
   }
 
   async setItem(key, value) {
-    const requestId = Math.random();
-    const message = JSON.stringify({
+    const { type } = await this.request({
       type: 'SET_ITEM',
       payload: { key, value },
     });
-
-    this.iframe.contentWindow.postMessage(message, this.storageOrigin);
-
-    const { type } = await this.listen(requestId);
 
     switch (type) {
     case 'OK':
