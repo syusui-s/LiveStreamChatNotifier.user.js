@@ -1,10 +1,24 @@
 // @flow
 class RemoteStorage {
+  // https://syusui-s.github.io/YouTubeCommentNotifier.user.js/settings/storage.html
   /*::
     iframe: HTMLIFrameElement
     storageUrl: string
     storageOrigin: string
   */
+  constructor(storageUrl) {
+    const iframe = document.createElement('iframe');
+
+    iframe.src = storageUrl;
+    iframe.style.display = 'none';
+    window.document.body.appendChild(iframe);
+
+    Object.assign(this, {
+      iframe,
+      storageUrl,
+      storageOrigin: new URL(storageUrl).origin,
+    });
+  }
 
   async request(message/* : { type: string, payload: {} } */, timeout = 5000) {
     const requestId = Math.random();
@@ -26,8 +40,8 @@ class RemoteStorage {
         if (data.requestId !== expectedRequestId)
           return;
 
-        resolve(data);
         window.removeEventListener('message', listener);
+        resolve(data);
       };
 
       setTimeout(() => {
@@ -37,18 +51,6 @@ class RemoteStorage {
 
       window.addEventListener('message', listener, false);
     });
-  }
-
-  // https://syusui-s.github.io/YouTubeCommentNotifier.user.js/settings/storage.html
-  constructor(storageUrl) {
-    const iframe = document.createElement('iframe');
-
-    iframe.src = storageUrl;
-    iframe.height = '0';
-    iframe.width  = '0';
-    window.document.body.appendChild(iframe);
-
-    Object.assign(this, { iframe, storageUrl, storageOrigin: new URL(storageUrl).origin, });
   }
 
   async getItem(key) {
