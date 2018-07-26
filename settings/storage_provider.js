@@ -6,40 +6,65 @@ const acceptableOrigins = [
   'https://www.mirrativ.com',
 ];
 
-window.addEventListener('message', event => {
+const ok = payload => ({
+  type: 'OK',
+  payload,
+});
+
+const badRequest = payload => ({
+  type: 'BAD_REQUEST',
+  payload,
+});
+
+const notFound = payload => ({
+  type: 'NOT_FOUND',
+  payload,
+});
+
+const internalPeerError = payload => ({
+  type: 'INTERNAL_PEER_ERROR',
+  payload,
+});
+
+const rawMessageHandler = actionHandler => event => {
   if (! acceptableOrigins.includes(event.origin))
     return;
 
   const { data, origin, source } = event;
   const { requestId, type, payload } = JSON.parse(data);
 
+  let responseObj;
+  try {
+    responseObj = actionHandler(type, payload);
+  } catch (e) {
+    responseObj = internalPeerError();
+  }
+
+  const response = JSON.stringify({ ...responseObj, requestId });
+  source.postMessage(response, origin);
+};
+
+window.addEventListener('message', rawMessageHandler((type, payload) => {
   switch (type) {
   case 'SET_ITEM':
-    {
-      const { key, value } = payload;
-      window.localStorage.setItem(key, value);
-      source.postMessage(JSON.stringify({
-        requestId,
-        type: 'OK',
-      }), origin);
-    }
-    break;
+  {
+    if (! payload)
+      return badRequest();
 
-  case 'GET_ITEM':
-    {
-      const { key } = payload;
-      const value = window.localStorage.getItem(key);
-      source.postMessage(JSON.stringify({
-        requestId,
-        type: 'OK',
-        payload: { value },
-      }), origin);
-    }
-    break;
-
-  default:
-    source.postMessage(JSON.stringify({
-      type: 'NOT_FOUND',
-    }));
+    const { key, value } = payload;
+    window.localStorage.setItem(key, value);
+    return ok();
   }
-}, false);
+  case 'GET_ITEM':
+  {
+    if (! payload)
+      return badRequest();
+
+    const { key } = payload;
+    const value = window.localStorage.getItem(key);
+    return ok({ value });
+  }
+  default:
+    return notFound();
+  }
+}), false);
