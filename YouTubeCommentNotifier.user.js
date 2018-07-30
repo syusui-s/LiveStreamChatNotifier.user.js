@@ -2,7 +2,7 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            0.15.1
+// @version            0.15.2
 // @match              https://www.youtube.com/live_chat*
 // @match              https://gaming.youtube.com/live_chat*
 // @run-at             document-end
@@ -191,7 +191,9 @@ async function main() {
     // にじさんじ SEEDs
     '海夜叉神', 'ドーラ', '名伽尾アズマ☀️', '出雲 霞', '轟 京子', 'シスター・クレア', '花畑チャイカ', '社築', '安土桃', 'D.E.放送局【鈴木勝】', '緑仙channel', '卯月コウ', '八朔ゆず',
     // にじさんじ ゲーマーズ
-    'Kanae Channel', 'Akabane Channel', 'saku*channel', '闇夜乃モルル / Yamiyono Moruru', '本間ひまわり - Himawari Honma -',
+    'Kanae Channel', 'Akabane Channel',
+    'saku*channel', '闇夜乃モルル / Yamiyono Moruru', '本間ひまわり - Himawari Honma -',
+    '魔界ノりりむ', 'Kuzuha Channel', '雪汝', '椎名唯華',
     // ホロライブ
     'フブキCh。白上フブキ', 'Aki Channel アキ・ローゼンタール', 'Kurisu Channel 人見クリス', 'Haato Channel 赤井はあと', 'Matsuri Channel 夏色まつり',
     // あにまーれ
