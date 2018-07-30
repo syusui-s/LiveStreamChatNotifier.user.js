@@ -48,16 +48,200 @@ const notifySound = {
 /**
  * 内部実装としてMapを使うSet
  */
-class MapSet {
-  constructor(...items) {
+class MapSet/*::<T>*/ {
+  /*::
+  map: Map<T, boolean>
+  */
+  constructor(items/*: Iterable<T>*/) {
     const map = new Map();
-    items.forEach(item => map.set(item, true));
+    Array.from(items).forEach(item => map.set(item, true));
 
     this.map = map;
   }
 
-  has(item) {
+  has(item/*: T */) {
     return this.map.has(item);
+  }
+
+  add(item) {
+    this.map.set(item, true);
+  }
+
+  [Symbol.iterator]() {
+    return (function *(map) {
+      for (const [item] of map)
+        yield item;
+    })(this.map);
+  }
+}
+
+class RemoteStorage {
+  // https://syusui-s.github.io/YouTubeCommentNotifier.user.js/settings/storage.html
+  /*::
+    iframe: HTMLIFrameElement
+    storageUrl: URL
+  */
+  constructor(storageUrl/*: URL */) {
+    const iframe = document.createElement('iframe');
+    iframe.src = storageUrl.toString();
+    iframe.style.display = 'none';
+
+    Object.assign(this, {
+      iframe,
+      storageUrl,
+    });
+  }
+
+  static async create(storageUrl, timeout) {
+    const storage = new RemoteStorage(storageUrl);
+    await storage.appendToWindow(timeout);
+
+    return storage;
+  }
+
+  async appendToWindow(timeout = 5000) {
+    return new Promise((resolve, reject) => {
+      this.iframe.addEventListener('load', () => resolve());
+      window.document.body.appendChild(this.iframe);
+
+      setTimeout(() => reject(), timeout);
+    });
+  }
+
+  async request(message/* : { type: string, payload: {} } */, timeout = 5000) {
+    const requestId = Math.random();
+    const messageStr = JSON.stringify({ ...message, requestId });
+
+    this.iframe.contentWindow.postMessage(messageStr, this.storageUrl.origin);
+
+    return this.listen(requestId, timeout);
+  }
+
+  async listen(expectedRequestId, timeout) {
+    return new Promise((resolve, reject) => {
+      const listener = event => {
+        if (event.origin !== this.storageUrl.origin)
+          return;
+
+        const data = JSON.parse(event.data);
+
+        if (data.requestId !== expectedRequestId)
+          return;
+
+        window.removeEventListener('message', listener);
+        resolve(data);
+      };
+
+      setTimeout(() => {
+        reject({ type: 'LOCAL_TIMEOUT' });
+        window.removeEventListener('message', listener);
+      }, timeout);
+
+      window.addEventListener('message', listener, false);
+    });
+  }
+
+  async getItem(key) {
+    const { type, payload } = await this.request({
+      type: 'GET_ITEM',
+      payload: { key },
+    });
+
+    switch (type) {
+    case 'OK':
+      return payload.value;
+    default:
+      throw new TypeError(`Unknown type '${type}'`);
+    }
+  }
+
+  async setItem(key, value) {
+    const { type } = await this.request({
+      type: 'SET_ITEM',
+      payload: { key, value },
+    });
+
+    switch (type) {
+    case 'OK':
+      return;
+    default:
+      throw new TypeError(`Unknown type '${type}'`);
+    }
+  }
+
+}
+
+class YouTubeSettings {
+  static fromObject(obj) {
+    const { channelNames } = obj;
+
+    return new this(channelNames);
+  }
+
+  static default() {
+    return new this([
+      'A.I.Channel', 'A.I.Games', 'Kaguya Luna Official', 'Mirai Akari Project', 'Siro Channel', 'ひなたチャンネル (Hinata Channel)', 'けもみみおーこく国営放送', '月ノ美兎', '萌実 & ヨメミ - Eilene', 'SoraCh. ときのそらチャンネル', '鳩羽つぐ', 'Shizuka Rin Official', '樋口楓【にじさんじ所属】', 'バーチャルおばあちゃんねる', 'Aoi ch.', 'ゲーム部プロジェクト', 'のらきゃっとチャンネル', '♥️♠️物述有栖♦️♣️', '【世界初?!】男性バーチャルYouTuber ばあちゃる', '薬袋カルテ - バーチャル診療所', 'エルフのえる【にじさんじ公式】', 'Azuma Lim Channel -アズマ リム-',
+      'Mari Channel', '鈴鹿詩子', 'チャンネルコウノスケ', '剣持刀也【にじさんじ所属】', '《にじさんじ所属の女神》モイラ', 'Hacka Channel ハッカドール', 'ヒメ チャンネル', 'Official Mugi Ienaga', 'YUA/藤崎由愛', 'ピーナッツくん!オシャレになりたい!',
+      '勇気ちひろ', 'Gengen Channel', '宇志海いちご', '乾ちゃんねる', '甲賀流忍者！ぽんぽこ', 'さなちゃんねる', 'Laki Station ラキステーション', 'ベイレーンチャンネル (Beilene Channel)', 'アキくんちゃんネル', '森中花咲', '渋谷ハジメのはじめ支部',
+      'Uka\'s room', 'ウェザーロイド Airi（ポン子）', '文野環【 にじさんじ所属の野良猫 】 文野環【 にじさんじ所属の野良猫 】', 'Zombi-Ko Channel', 'Yuhi Riri Official', 'もちひよこ', 'ケリン', 'あっくん大魔王', 'Roboco Ch. - ロボ子', '伏見ガク【にじさんじ所属】', 'おめがシスターズ [Ω Sister]', 'さはな【VTuber】', 'バーチャルYouTuber万楽えね', 'MeguRoom', 'Gilzaren III Season 1', 'ニーツちゃんねる', '電脳少女シロGames', '滓残', 'バーチャルゴリラ', 'DeepWebUnderground', 'Hibiki Ao', '最果ての魔王ディープブリザード', 'みゅ みゅ', '岩本町芸能社YouTube', '春日部つくし', '北上双葉', '霊電カスカ', '夜桜たま', 'ぱかチューブっ!', '日雇礼子のドヤ街暮らしチャンネル', '海月ねうmituki neu', 'Tsunohane Akagi Vtube', 'もこめめ*channel', '馬越健太郎チャンネル', 'カルロ ピノ', '金剛いろは', '小林幸子のさっちゃんねる', 'ちえり花京院', 'Kanata Hikari / LYTO【バーチャルYoutuber】', 'Hoonie friends', '織田信姫', 'ミディ / 作曲バーチャルyoutuber', 'さょちゃんのVR図書室', '虚拟DD', '木曽あずき', 'バーチャル園児-めいちゃんねる',
+      '猫乃木もち', 'いるはーと', '地獄ちゃんねる', 'ぜったい天使くるみちゃん', '異世界転生系魔王ヘルネス', 'ねむちゃんねる【バーチャル美少女YouTuber】', '八重沢なとり', 'ネコケン Nekoken世紀末系猫耳幼女バーチャルYouTuber', '/ ODDAIオッドアイ', 'Kuzuha Channel', 'ユキミお姉ちゃんねる', '魔法少女ちあちあちゃんねる', '牛巻 りこ', 'Channelパゲ美のバーチャルオカマ', '珠根うたChannel', 'モスコミュール放送局', 'ico通夜の黄泉巡りch', 'poemcore tokyo', 'DOLL GAL millna', 'クゥChannel', 'あさひちゃん寝る【バーチャルYouTuber】', '神楽すず', 'ヤマト イオリ', 'たかじんちゃんねる【バーチャルyoutuber】', 'ナイセンチャンネル naisen channel', '天神 子兎音 Tenjin Kotone', 'スパイト-spite-【公式】', 'メイカちゃんねる', '〜旅するバーチャルyoutuber〜動く城のフィオ', '食虫植物TV -Carnivorous Plants videos-', 'イヌージョンCHANNEL', 'Arcadia L.E. Projectバリトンエルフ', 'かまってちゃんねる', 'あいえるちゃんねる/株式会社インフィニットループ', 'リクビッツ / バーチャルYouTuber', '/食虫植物系VTuberネアちゃんねる', 'シテイルチャンネル', 'Reratan', 'デラとハドウ Channel', 'Channelれらたん', '世界クルミ/バーチャルYouTuber', '白二郎/VRアライグマ', 'Mel Channel 夜空メルチャンネル', 'ファイ博士φ電脳サイエンティスト', '真空管ドールズ公式',
+      '2.5次元バーチャルキャスター「獣音ロウ&式大元」チャンネル', 'ぼっちぼろまる', '淫獣帝国', 'Kite Channel', 'すくろーるちゃんねる!!! ／ 巣黒るい', 'Kimino Yumeka Official', '新川良', '天野声太郎', 'Sophiaちゃんねる', '人工知能AI ユニ', '白鳥天羽【バーチャル百合お嬢様】', 'RAY WAKANA', 'ありしあちゃんねる', 'MIALチャンネル', 'クーテトラチャンネル', 'スズキセシル', 'バーチャルおじいちゃん / G3Games', 'ドットチャンネル./DotChannel.', '星菜日向夏のゼロ時間目', '魔王の息子わんわん', 'そらのももか', 'コハクのおうち', 'バーチャルYouTuber蟹', 'くのいち子バーチャルユーチューバー', '姫宮縷愛', '魔界四天王ださお', 'バーチャル美少女 ハラムちゃんねる',
+      // にじさんじ SEEDs
+      '海夜叉神', 'ドーラ', '名伽尾アズマ☀️', '出雲 霞', '轟 京子', 'シスター・クレア', '花畑チャイカ', '社築', '安土桃', 'D.E.放送局【鈴木勝】', '緑仙channel', '卯月コウ', '八朔ゆず',
+      // にじさんじ ゲーマーズ
+      'Kanae Channel', 'Akabane Channel',
+      'saku*channel', '闇夜乃モルル / Yamiyono Moruru', '本間ひまわり - Himawari Honma -',
+      '魔界ノりりむ', 'Kuzuha Channel', '雪汝', '椎名唯華',
+      // ホロライブ
+      'フブキCh。白上フブキ', 'Aki Channel アキ・ローゼンタール', 'Kurisu Channel 人見クリス', 'Haato Channel 赤井はあと', 'Matsuri Channel 夏色まつり',
+      // あにまーれ
+      'Ichika Channel / 宗谷 いちか 【あにまーれ】', 'Ran Channel / 日ノ隈らん 【あにまーれ】', 'Hinako Channel / 宇森ひなこ 【あにまーれ】', 'Kuromu Channel / 稲荷くろむ 【あにまーれ】', 'Haneru Channel / 因幡はねる 【あにまーれ】', 'AniMare Official / あにまーれ公式',
+    ]);
+  }
+
+  /*::
+  channelNames: MapSet<string>
+  */
+  constructor(channelNames) {
+    Object.assign(this, {
+      channelNames: new MapSet(channelNames),
+    });
+  }
+
+  toObject() {
+    const { channelNames } = this; 
+
+    return {
+      channelNames: [...channelNames]
+    };
+  }
+}
+
+class YouTubeSettingsRepository {
+  static get keyName() {
+    return 'YouTubeSettings';
+  }
+
+  /*::
+  store: Storage | RemoteStorage
+  */
+  constructor(store) {
+    Object.assign(this, { store });
+  }
+
+  async getSettings() {
+    const settingsJson = await this.store.getItem(this.constructor.keyName);
+    if (! settingsJson) return;
+
+    const settingsObj = JSON.parse(settingsJson);
+    if (! settingsObj) return;
+
+    return YouTubeSettings.fromObject(settingsObj);
+  }
+
+  async saveSettings(settings) {
+    const settingsJson = JSON.stringify(settings.toObject());
+    return this.store.setItem(this.constructor.keyName, settingsJson);
   }
 }
 
@@ -65,6 +249,12 @@ class MapSet {
  * ライブストリームに流れるメッセージ
  */
 class Message {
+  /*::
+  author: string
+  iconUrl: string
+  badgeType: ?string
+  body: string
+  */
   /**
    * @param {string}  author    投稿者名
    * @param {string}  iconUrl   投稿者のアイコン
@@ -148,6 +338,12 @@ class NotifierNotificationAPI {
  * 通知に関する処理を置いておく Domain Service
  */
 class NotificationService {
+  /*::
+  notifier: NotifierGM | NotifierNotificationAPI
+  notifySound: { play: function }
+  authorNames: MapSet<string>
+  */
+
   /**
    * @param {Notifier}      notifier           通知を提供するサービス
    * @param {object}        notifySound        通知音を鳴らしてくれるような仕組みを持つオブジェクト
@@ -181,24 +377,11 @@ class NotificationService {
  *
  */
 async function main() {
-  const channels = new MapSet(
-    'A.I.Channel', 'A.I.Games', 'Kaguya Luna Official', 'Mirai Akari Project', 'Siro Channel', 'ひなたチャンネル (Hinata Channel)', 'けもみみおーこく国営放送', '月ノ美兎', '萌実 & ヨメミ - Eilene', 'SoraCh. ときのそらチャンネル', '鳩羽つぐ', 'Shizuka Rin Official', '樋口楓【にじさんじ所属】', 'バーチャルおばあちゃんねる', 'Aoi ch.', 'ゲーム部プロジェクト', 'のらきゃっとチャンネル', '♥️♠️物述有栖♦️♣️', '【世界初?!】男性バーチャルYouTuber ばあちゃる', '薬袋カルテ - バーチャル診療所', 'エルフのえる【にじさんじ公式】', 'Azuma Lim Channel -アズマ リム-',
-    'Mari Channel', '鈴鹿詩子', 'チャンネルコウノスケ', '剣持刀也【にじさんじ所属】', '《にじさんじ所属の女神》モイラ', 'Hacka Channel ハッカドール', 'ヒメ チャンネル', 'Official Mugi Ienaga', 'YUA/藤崎由愛', 'ピーナッツくん!オシャレになりたい!',
-    '勇気ちひろ', 'Gengen Channel', '宇志海いちご', '乾ちゃんねる', '甲賀流忍者！ぽんぽこ', 'さなちゃんねる', 'Laki Station ラキステーション', 'ベイレーンチャンネル (Beilene Channel)', 'アキくんちゃんネル', '森中花咲', '渋谷ハジメのはじめ支部',
-    'Uka\'s room', 'ウェザーロイド Airi（ポン子）', '文野環【 にじさんじ所属の野良猫 】 文野環【 にじさんじ所属の野良猫 】', 'Zombi-Ko Channel', 'Yuhi Riri Official', 'もちひよこ', 'ケリン', 'あっくん大魔王', 'Roboco Ch. - ロボ子', '伏見ガク【にじさんじ所属】', 'おめがシスターズ [Ω Sister]', 'さはな【VTuber】', 'バーチャルYouTuber万楽えね', 'MeguRoom', 'Gilzaren III Season 1', 'ニーツちゃんねる', '電脳少女シロGames', '滓残', 'バーチャルゴリラ', 'DeepWebUnderground', 'Hibiki Ao', '最果ての魔王ディープブリザード', 'みゅ みゅ', '岩本町芸能社YouTube', '春日部つくし', '北上双葉', '霊電カスカ', '夜桜たま', 'ぱかチューブっ!', '日雇礼子のドヤ街暮らしチャンネル', '海月ねうmituki neu', 'Tsunohane Akagi Vtube', 'もこめめ*channel', '馬越健太郎チャンネル', 'カルロ ピノ', '金剛いろは', '小林幸子のさっちゃんねる', 'ちえり花京院', 'Kanata Hikari / LYTO【バーチャルYoutuber】', 'Hoonie friends', '織田信姫', 'ミディ / 作曲バーチャルyoutuber', 'さょちゃんのVR図書室', '虚拟DD', '木曽あずき', 'バーチャル園児-めいちゃんねる',
-    '猫乃木もち', 'いるはーと', '地獄ちゃんねる', 'ぜったい天使くるみちゃん', '異世界転生系魔王ヘルネス', 'ねむちゃんねる【バーチャル美少女YouTuber】', '八重沢なとり', 'ネコケン Nekoken世紀末系猫耳幼女バーチャルYouTuber', '/ ODDAIオッドアイ', 'Kuzuha Channel', 'ユキミお姉ちゃんねる', '魔法少女ちあちあちゃんねる', '牛巻 りこ', 'Channelパゲ美のバーチャルオカマ', '珠根うたChannel', 'モスコミュール放送局', 'ico通夜の黄泉巡りch', 'poemcore tokyo', 'DOLL GAL millna', 'クゥChannel', 'あさひちゃん寝る【バーチャルYouTuber】', '神楽すず', 'ヤマト イオリ', 'たかじんちゃんねる【バーチャルyoutuber】', 'ナイセンチャンネル naisen channel', '天神 子兎音 Tenjin Kotone', 'スパイト-spite-【公式】', 'メイカちゃんねる', '〜旅するバーチャルyoutuber〜動く城のフィオ', '食虫植物TV -Carnivorous Plants videos-', 'イヌージョンCHANNEL', 'Arcadia L.E. Projectバリトンエルフ', 'かまってちゃんねる', 'あいえるちゃんねる/株式会社インフィニットループ', 'リクビッツ / バーチャルYouTuber', '/食虫植物系VTuberネアちゃんねる', 'シテイルチャンネル', 'Reratan', 'デラとハドウ Channel', 'Channelれらたん', '世界クルミ/バーチャルYouTuber', '白二郎/VRアライグマ', 'Mel Channel 夜空メルチャンネル', 'ファイ博士φ電脳サイエンティスト', '真空管ドールズ公式',
-    '2.5次元バーチャルキャスター「獣音ロウ&式大元」チャンネル', 'ぼっちぼろまる', '淫獣帝国', 'Kite Channel', 'すくろーるちゃんねる!!! ／ 巣黒るい', 'Kimino Yumeka Official', '新川良', '天野声太郎', 'Sophiaちゃんねる', '人工知能AI ユニ', '白鳥天羽【バーチャル百合お嬢様】', 'RAY WAKANA', 'ありしあちゃんねる', 'MIALチャンネル', 'クーテトラチャンネル', 'スズキセシル', 'バーチャルおじいちゃん / G3Games', 'ドットチャンネル./DotChannel.', '星菜日向夏のゼロ時間目', '魔王の息子わんわん', 'そらのももか', 'コハクのおうち', 'バーチャルYouTuber蟹', 'くのいち子バーチャルユーチューバー', '姫宮縷愛', '魔界四天王ださお', 'バーチャル美少女 ハラムちゃんねる',
-    // にじさんじ SEEDs
-    '海夜叉神', 'ドーラ', '名伽尾アズマ☀️', '出雲 霞', '轟 京子', 'シスター・クレア', '花畑チャイカ', '社築', '安土桃', 'D.E.放送局【鈴木勝】', '緑仙channel', '卯月コウ', '八朔ゆず',
-    // にじさんじ ゲーマーズ
-    'Kanae Channel', 'Akabane Channel',
-    'saku*channel', '闇夜乃モルル / Yamiyono Moruru', '本間ひまわり - Himawari Honma -',
-    '魔界ノりりむ', 'Kuzuha Channel', '雪汝', '椎名唯華',
-    // ホロライブ
-    'フブキCh。白上フブキ', 'Aki Channel アキ・ローゼンタール', 'Kurisu Channel 人見クリス', 'Haato Channel 赤井はあと', 'Matsuri Channel 夏色まつり',
-    // あにまーれ
-    'Ichika Channel / 宗谷 いちか 【あにまーれ】', 'Ran Channel / 日ノ隈らん 【あにまーれ】', 'Hinako Channel / 宇森ひなこ 【あにまーれ】', 'Kuromu Channel / 稲荷くろむ 【あにまーれ】', 'Haneru Channel / 因幡はねる 【あにまーれ】', 'AniMare Official / あにまーれ公式',
-  );
+  const storageUrl = new URL('https://syusui-s.github.io/YouTubeCommentNotifier.user.js/settings/storage.html');
+  const remoteStorage = await RemoteStorage.create(storageUrl);
+
+  const repository = new YouTubeSettingsRepository(remoteStorage);
+  const settings = await repository.getSettings() || YouTubeSettings.default();
 
   const notifier = [
     new NotifierGM(),
@@ -210,7 +393,7 @@ async function main() {
     return;
   }
 
-  const notificationService = new NotificationService(notifier, notifySound, channels);
+  const notificationService = new NotificationService(notifier, notifySound, settings.channelNames);
 
   if (! await notificationService.requestPermission()) {
     window.alert('Notificatonの権限がありません');
