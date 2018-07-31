@@ -11,6 +11,8 @@
 // @grant              GM.notification
 // ==/UserScript==
 
+const baseUrl = 'https://syusui-s.github.io/YouTubeCommentNotifier.user.js';
+
 /**
  * 指定のミリ秒 ms だけ、何もしないで待機する
  *
@@ -76,11 +78,18 @@ class MapSet/*::<T>*/ {
 }
 
 class RemoteStorage {
+  static async create(storageUrl, timeout) {
+    const storage = new RemoteStorage(storageUrl);
+    await storage.appendToWindow(timeout);
+
+    return storage;
+  }
+
   // https://syusui-s.github.io/YouTubeCommentNotifier.user.js/settings/storage.html
   /*::
     iframe: HTMLIFrameElement
     storageUrl: URL
-  */
+    */
   constructor(storageUrl/*: URL */) {
     const iframe = document.createElement('iframe');
     iframe.src = storageUrl.toString();
@@ -90,13 +99,6 @@ class RemoteStorage {
       iframe,
       storageUrl,
     });
-  }
-
-  static async create(storageUrl, timeout) {
-    const storage = new RemoteStorage(storageUrl);
-    await storage.appendToWindow(timeout);
-
-    return storage;
   }
 
   async appendToWindow(timeout = 5000) {
@@ -373,13 +375,10 @@ class NotificationService {
   }
 }
 
-/**
- *
- */
 async function main() {
-  const storageUrl = new URL('https://syusui-s.github.io/YouTubeCommentNotifier.user.js/settings/storage.html');
-  const remoteStorage = await RemoteStorage.create(storageUrl);
+  const storageUrl = new URL(`${baseUrl}/settings/storage.html`);
 
+  const remoteStorage = await RemoteStorage.create(storageUrl);
   const repository = new YouTubeSettingsRepository(remoteStorage);
   const settings = await repository.getSettings() || YouTubeSettings.default();
 
@@ -432,7 +431,7 @@ async function main() {
       return new Message(name, iconUrl, badgeType, body);
     }
   };
-    
+
   const observer = records => {
     records.forEach(record => {
       switch (record.type) {
@@ -453,4 +452,5 @@ async function main() {
   return m;
 }
 
-main();
+if (window.location.href.indexOf(baseUrl) < 0)
+  main();
