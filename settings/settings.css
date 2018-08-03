@@ -1,0 +1,36 @@
+* { padding: 0; margin: 0; }
+
+div {
+  padding: 0;
+  margin: 0;
+}
+
+h1 { margin: 0.67em 0; font-size: 2em; }
+h2 { margin: 0.83em 0; font-size: 1.5em; }
+h3 { margin: 1.00em 0; font-size: 1.17em; }
+h4 { margin: 1.33em 0; font-size: 1em; }
+h5 { margin: 1.67em 0; font-size: 0.83em; }
+
+input[type="sumbit"], input[type="button"], button { padding: 1px 6px; }
+
+ul { margin: 1em 0; padding-left: 40px; }
+
+/**************************************************/
+
+.main {
+  max-width: 640px;
+  min-width: 40vw;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 10px 30px;
+  box-sizing: border-box;
+  box-shadow: #222 0 0 10px;
+}
+
+ul { margin: 0; padding-left: 0; }
+li { list-style: none; }
+
+.channelName { display: flex; }
+.channelName__name   { flex: 20; }
+.channelName__edit   { width: 30px; }
+.channelName__delete { width: 30px; }

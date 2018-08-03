@@ -4,63 +4,15 @@
     <meta charset="utf-8">
     <title>YouTubeCommentNotifier 設定</title>
   </head>
-  <style>
-* { padding: 0; margin: 0; }
-
-div {
-  padding: 0;
-  margin: 0;
-}
-
-.main {
-  width: 70vw;
-  min-width: 1000px;
-  min-height: 100vh;
-  margin: 0 auto;
-  padding: 10px 100px;
-  box-sizing: border-box;
-  box-shadow: #222 0 0 10px;
-}
-
-h1 { margin: 0.67em 0; font-size: 2em; }
-h2 { margin: 0.83em 0; font-size: 1.5em; }
-h3 { margin: 1.00em 0; font-size: 1.17em; }
-h4 { margin: 1.33em 0; font-size: 1em; }
-h5 { margin: 1.67em 0; font-size: 0.83em; }
-
-input[type="sumbit"], input[type="button"], button { padding: 1px 6px; }
-
-ul { margin: 1em 0; padding-left: 40px; }
-
-/**************************************************/
-
-ul { margin: 0; padding-left: 0; }
-li { list-style: none; }
-  </style>
-  <script type="text/javascript" src="/YouTubeCommentNotifier.user.js"></script>
-  <script type="text/javascript" src="/settings/">
-window.addEventListener('DOMContentsLoaded', () => {
-  console.log("hoge")
-});
-  </script>
+  <link rel="stylesheet" href="./settings.css" type="text/css" media="screen" charset="utf-8">
+  <script type="text/javascript" src="../YouTubeCommentNotifier.user.js"></script>
+  <script type="text/javascript" src="./YouTubeCommentNotifierSettings.js"></script>
   <body>
     <div class="main">
       <div class="header" role="header">
         <h1>設定</h1>
+        <div class="root"></div>
       </div>
-      <form class="settings">
-        <section>
-        <h2>通知チャンネル名</h2>
-        <p>通知するチャンネル名を登録できます。</p>
-        <ul class="channelNames">
-          <li class="channelName">
-            <input class="channelName__input" type="text" required>
-            <input class="channelName__delete" type="button" value="削除">
-          </li>
-        </ul>
-        </section>
-        <input type="submit" value="保存">
-      </form>
     </div>
   </body>
 </html>

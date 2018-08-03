@@ -13,6 +13,11 @@
 
 const baseUrl = 'https://syusui-s.github.io/YouTubeCommentNotifier.user.js';
 
+const workUrls = [
+  'https://www.youtube.com/live_chat',
+  'https://gaming.youtube.com/live_chat',
+];
+
 /**
  * 指定のミリ秒 ms だけ、何もしないで待機する
  *
@@ -452,5 +457,8 @@ async function main() {
   return m;
 }
 
-if (window.location.href.indexOf(baseUrl) < 0)
+const isWorkUrl = url =>
+  workUrls.some(workUrl => url.startsWith(workUrl));
+
+if (isWorkUrl(window.location.href))
   main();
