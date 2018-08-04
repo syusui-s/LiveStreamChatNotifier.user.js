@@ -82,6 +82,8 @@ class MapSet/*::<T>*/ {
   }
 }
 
+class TimeoutError extends Error { }
+
 class RemoteStorage {
   static async create(storageUrl, timeout) {
     const storage = new RemoteStorage(storageUrl);
@@ -111,7 +113,7 @@ class RemoteStorage {
       this.iframe.addEventListener('load', () => resolve());
       window.document.body.appendChild(this.iframe);
 
-      setTimeout(() => reject(), timeout);
+      setTimeout(() => reject(new TimeoutError()), timeout);
     });
   }
 
@@ -140,7 +142,7 @@ class RemoteStorage {
       };
 
       setTimeout(() => {
-        reject({ type: 'LOCAL_TIMEOUT' });
+        reject(new TimeoutError());
         window.removeEventListener('message', listener);
       }, timeout);
 
@@ -385,7 +387,7 @@ async function main() {
 
   const remoteStorage = await RemoteStorage.create(storageUrl);
   const repository = new YouTubeSettingsRepository(remoteStorage);
-  const settings = await repository.getSettings() || YouTubeSettings.default();
+  await repository.getSettings() || YouTubeSettings.default();
 
   const notifier = [
     new NotifierGM(),

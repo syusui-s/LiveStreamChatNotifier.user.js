@@ -17,20 +17,132 @@ ul { margin: 1em 0; padding-left: 40px; }
 
 /**************************************************/
 
+body {
+  color: #444;
+  font-family: sans-serif;
+}
+
+.header {
+  min-width: 120px;
+  margin: 0 auto;
+  padding: 10px 40px 60px 40px;
+  margin-bottom: -60px;
+  box-sizing: border-box;
+  background: #f53535;
+  color: #fff;
+}
+
+.header__title {
+  font-weight: bold;
+}
+
+.header__content {
+  max-width: 640px;
+  min-width: 40vw;
+  margin: 0 auto;
+}
+
 .main {
   max-width: 640px;
   min-width: 40vw;
   min-height: 100vh;
   margin: 0 auto;
-  padding: 10px 30px;
+  padding: 10px 40px;
   box-sizing: border-box;
-  box-shadow: #222 0 0 10px;
+  box-shadow: #444 0 4px 4px;
+  background: #fff;
 }
 
 ul { margin: 0; padding-left: 0; }
 li { list-style: none; }
 
-.channelName { display: flex; }
-.channelName__name   { flex: 20; }
-.channelName__edit   { width: 30px; }
-.channelName__delete { width: 30px; }
+.setting-section__title {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.channelName {
+  display: flex;
+  align-items: center;
+  height: 3em;
+  width: 100%;
+  list-style: none;
+  border-bottom: 1px solid #eee;
+}
+
+.channelName__name   { flex: 1; }
+
+.channelName__menu { }
+
+.channelName__menu:hover {
+  padding: 10px 0px;
+  box-shadow: #222 0 1px 2px;
+  background: #fff;
+}
+
+.channelName__menu:after {
+  content: "︙";
+  color: #888;
+  font-weight: bold;
+}
+
+.channelName__menu:hover:after {
+  content: none;
+}
+
+.channelName__menu * {
+  display: none;
+}
+
+.channelName__menu:hover * {
+  display: flex;
+}
+
+.channelName__edit   { width: 50px; }
+.channelName__delete { width: 50px; }
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.modal__content {
+  max-width: 640px;
+  min-width: 40vw;
+  min-height: 3em;
+  background-color: #fff;
+  padding: 20px 40px;
+  box-shadow: #222 0 2px 5px;
+  border-color: #fff;
+}
+
+.flat-button {
+  display: inline-block;
+  border: none;
+  margin-bottom: 10px;
+  padding: 0.5em 0.8em;
+  text-decoration: none;
+  vertical-align: middle;
+  box-shadow: #555 0 1px 2px;
+  font-size: 1em;
+  color: #fff;
+  background: #11c189;
+  font-weight: bold;
+  transition: 0.12s all;
+}
+
+.flat-button:hover {
+  transition: 0.2s all;
+  filter: brightness(1.1) hue-rotate(-5deg);
+}
+
+
+/* vim: set et ts=2 sw=2 : */
