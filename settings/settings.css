@@ -72,30 +72,47 @@ li { list-style: none; }
 
 .channelName__name   { flex: 1; }
 
-.channelName__menu { }
+.menu {}
 
-.channelName__menu:hover {
+.menu:hover {
+  transition: 0.1s all;
+  display: flex;
+  flex-direction: column;
   padding: 10px 0px;
+  width: 100px;
   box-shadow: #222 0 1px 2px;
   background: #fff;
 }
 
-.channelName__menu:after {
+.menu:after {
   content: "︙";
   color: #888;
   font-weight: bold;
 }
 
-.channelName__menu:hover:after {
+.menu:hover:after {
   content: none;
 }
 
-.channelName__menu * {
+.menu * {
   display: none;
 }
 
-.channelName__menu:hover * {
-  display: flex;
+.menu__item {
+}
+
+*:hover > .menu__item {
+  display: block;
+  background: #fff;
+  border: none;
+  padding: 5px 10px;
+  width: 100%;
+  text-align: center;
+}
+
+.menu__item:hover {
+  background: #e9e9e9;
+  transition: 0.1s all;
 }
 
 .channelName__edit   { width: 50px; }
@@ -140,9 +157,13 @@ li { list-style: none; }
 }
 
 .flat-button:hover {
-  transition: 0.2s all;
+  transition: 0.22s all;
   filter: brightness(1.1) hue-rotate(-5deg);
 }
 
+.flat-button:add {
+  transition: 0.22s all;
+  filter: brightness(1.1) hue-rotate(-5deg);
+}
 
 /* vim: set et ts=2 sw=2 : */
