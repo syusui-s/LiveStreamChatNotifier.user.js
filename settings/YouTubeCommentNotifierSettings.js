@@ -46,7 +46,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     return doc.body.firstChild;
   };
 
-  const settingsView = ({ channelNames }) => {
+  const settingsView = ({ settings }, actions, reduce) => {
     const elem = html`
       <form class="settings">
         <section>
@@ -62,22 +62,22 @@ window.addEventListener('DOMContentLoaded', async () => {
     `;
 
     elem.querySelector('section')
-      .appendChild( channelNamesView([...channelNames]) );
+      .appendChild( channelNamesView([...settings.channelNames], actions, reduce) );
 
     return elem;
   };
 
-  const channelNamesView = names => {
+  const channelNamesView = (names, actions, reduce) => {
     const elem = html`
       <ul class="channelNames">
       </ul>
     `;
-    names.forEach(name => elem.appendChild(channelNameView(name)));
+    names.forEach(name => elem.appendChild(channelNameView(name, actions, reduce)));
 
     return elem;
   };
 
-  const channelNameView = channelName => {
+  const channelNameView = (channelName, actions, reduce) => {
     const elem = html`
       <li class="channelName">
         <div class="channelName__name">${channelName}</div>
@@ -88,22 +88,40 @@ window.addEventListener('DOMContentLoaded', async () => {
       </li>
     `;
 
-    elem.querySelector('channelName__edit')
-      .addEventListener('click', () => emit(actions.showEdit(channelName)));
-    elem.querySelector('channelName__delete')
-      .addEventListener('click', () => emit(actions.deleteConfirm(channelName)));
+    elem.querySelector('.channelName__edit')
+      .addEventListener('click', ev => { ev.preventDefault(); reduce(actions.showEdit(channelName)); });
+    elem.querySelector('.channelName__delete')
+      .addEventListener('click', ev => { ev.preventDefault(); reduce(actions.delete(channelName)); });
 
     return elem;
   };
 
-  const states = new Enum([ 'Initial', 'Adding', 'Editing', ]);
+  const States = new Enum([ 'Initial', 'Adding', 'Editing', ]);
 
   const actions = {
-    showEdit(channelName) {
-      Object.assign(state, {
-        current: 
-      });
-    }
+    showEdit: channelName => state => ({
+      ...state,
+      current: States.Editing,
+      editing: channelName,
+    }),
+
+    delete: channelName => state => { 
+      if (! window.confirm('本当に削除しますか？')) {
+        return state;
+      }
+
+      const newChannelNames = new MapSet(state.settings.channelNames);
+      newChannelNames.delete(channelName);
+
+      const settings = new YouTubeSettings(newChannelNames);
+
+      return {
+        ...state,
+        current: States.Initial,
+        settings,
+      };
+    },
+
   };
 
   const storageUrl = new URL(`${window.location.origin}/settings/storage.html`);
@@ -124,10 +142,21 @@ window.addEventListener('DOMContentLoaded', async () => {
   }
 
   const state = {
-    current: states.Initial,
+    current: States.Initial,
+    settings
   };
 
   const root = document.body.querySelector('.root');
-  root.appendChild(settingsView(settings));
+
+  const reduce = state => reducer => {
+    const newState = reducer(state);
+    const newView = settingsView(newState, actions, reduce(newState));
+
+    root.firstChild ?
+      root.firstChild.replaceWith(newView) :
+      root.appendChild(newView);
+  };
+
+  reduce(state)(e => e);
 });
 

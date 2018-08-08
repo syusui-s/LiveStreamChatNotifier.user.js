@@ -74,6 +74,10 @@ class MapSet/*::<T>*/ {
     this.map.set(item, true);
   }
 
+  delete(item) {
+    this.map.delete(item);
+  }
+
   [Symbol.iterator]() {
     return (function *(map) {
       for (const [item] of map)
