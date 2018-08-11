@@ -391,7 +391,7 @@ async function main() {
 
   const remoteStorage = await RemoteStorage.create(storageUrl);
   const repository = new YouTubeSettingsRepository(remoteStorage);
-  await repository.getSettings() || YouTubeSettings.default();
+  const settings = await repository.getSettings() || YouTubeSettings.default();
 
   const notifier = [
     new NotifierGM(),

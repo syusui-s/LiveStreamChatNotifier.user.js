@@ -1,6 +1,8 @@
 window.addEventListener('DOMContentLoaded', async () => {
   'use strict';
 
+  /* global RemoteStorage YouTubeSettings YouTubeSettingsRepository MapSet TimeoutError */
+
   class Enum {
     constructor(set) {
       for (const entry of set) {
@@ -40,29 +42,61 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     const htmlString = String.raw(callSites, ...escapedSubstitutions);
 
-    const domParser = new DOMParser();
-    const doc = domParser.parseFromString(htmlString, 'text/html');
+    const template = document.createElement('template');
+    template.innerHTML = htmlString;
 
-    return doc.body.firstChild;
+    return template.content;
   };
 
-  const settingsView = ({ settings }, actions, reduce) => {
+  const settingsView = (state, actions, reduce) => {
     const elem = html`
       <form class="settings">
         <section>
           <h2 class="setting-section__title">通知チャンネル</h2>
-          <p><button class="flat-button flat-button--add">追加</button></p>
+          <p><button class="flat-button flat-button--add"><span>追加</span></button></p>
         </section>
-        <div class="modal" style="display: none;">
-          <div class="modal__content">
-            hoge
-          </div>
-        </div>
       </form>
     `;
 
-    elem.querySelector('section')
-      .appendChild( channelNamesView([...settings.channelNames], actions, reduce) );
+    const section = elem.querySelector('section');
+
+    const { settings } = state;
+    section.appendChild( channelNamesView([...settings.channelNames], actions, reduce) );
+
+    const { current, editing } = state;
+    section.appendChild( channelNameModalView({ current, editing }, actions, reduce) );
+
+    return elem;
+  };
+
+  const channelNameModalView = ({ current, editing }, actions, reduce) => {
+    if (! [ States.Editing, States.Adding ].includes(current)) {
+      return document.createElement('div');
+    }
+
+    const title = current => {
+      switch (current) {
+      case States.Editing: return '編集';
+      case States.Adding:  return '追加';
+      }
+    };
+
+    const channelName = current === States.Editing ? editing : '';
+
+    const elem = html`
+      <div class="modal">
+        <div class="modal__content">
+          <h2>${title(current)}</h2>
+          <form class="form">
+            <label class="label" for="channel_name">チャンネル名</label>
+            <input class="input-text" name="channel_name" type="text" value="${channelName}">
+
+            <button class="flat-button flat-button--cancel">キャンセル</button>
+            <button class="flat-button" type="submit">保存</button>
+          </form>
+        </div>
+      </div>
+    `;
 
     return elem;
   };
@@ -114,6 +148,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       newChannelNames.delete(channelName);
 
       const settings = new YouTubeSettings(newChannelNames);
+      repository.saveSettings(settings);
 
       return {
         ...state,
@@ -132,13 +167,17 @@ window.addEventListener('DOMContentLoaded', async () => {
   try {
     settings = await repository.getSettings() || YouTubeSettings.default();
   } catch (e) {
-    window.alert([
-      '設定の読み込みに失敗しました。',
-      '通常と異なるページで動作させていませんか？',
-      'https://github.com/syusui-s/YouTubeCommentNotifier.user.js/ から設定してみてください',
-    ].join('\n'));
+    if (e instanceof TimeoutError) {
+      window.alert([
+        '設定の読み込みに失敗しました。',
+        '通常と異なるページで動作させていませんか？',
+        'https://github.com/syusui-s/YouTubeCommentNotifier.user.js/ から設定してみてください',
+      ].join('\n'));
 
-    return;
+      return;
+    } else {
+      throw e;
+    }
   }
 
   const state = {
@@ -146,7 +185,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     settings
   };
 
-  const root = document.body.querySelector('.root');
+  const root = document.body.querySelector('.main');
 
   const reduce = state => reducer => {
     const newState = reducer(state);

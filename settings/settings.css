@@ -34,6 +34,7 @@ body {
 
 .header__title {
   font-weight: bold;
+  word-break: break-all;
 }
 
 .header__content {
@@ -156,8 +157,8 @@ li { list-style: none; }
   box-shadow: #555 0 1px 2px;
   font-size: 1em;
   color: #fff;
-  background: #11c189;
-  font-weight: bold;
+  background: #f53535; /* background: #11c189; */
+  font-weight: normal;
   transition: 0.12s all;
   outline: none;
 }
@@ -168,7 +169,36 @@ li { list-style: none; }
 }
 
 .flat-button:active {
-  box-shadow: #222 0 1px 10px;
+  box-shadow: #555 0 1px 10px;
+}
+
+.flat-button--cancel {
+  background: #fff;
+  color: #d42525;
+}
+
+.flat-button--cancel:hover {
+  background: #e8e8e8;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+}
+
+.input-text {
+  height: 2em;
+  border: none;
+  border-bottom: 1px solid #888;
+  outline: none;
+  margin: 5px 0;
+}
+
+.input-text::focus {
+  border-bottom: 1px solid #e99;
 }
 
 /* vim: set et ts=2 sw=2 : */
