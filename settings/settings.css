@@ -20,6 +20,7 @@ ul { margin: 1em 0; padding-left: 40px; }
 body {
   color: #444;
   font-family: sans-serif;
+  font-size: 16px;
 }
 
 .header {
@@ -209,5 +210,11 @@ li { list-style: none; }
 .input-text::focus {
   border-bottom: 1px solid #e99;
 }
+
+.input-text::selection {
+  background: #f83535;
+  color: #fff;
+}
+
 
 /* vim: set et ts=2 sw=2 : */
