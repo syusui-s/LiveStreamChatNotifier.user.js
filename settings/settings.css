@@ -71,7 +71,13 @@ li { list-style: none; }
   border-bottom: 1px solid #eee;
 }
 
-.channelName__name   { flex: 1; }
+.channelName__name {
+  max-height: 100%;
+  word-break: break-all;
+  flex: 1;
+  text-overflow: ellipse;
+  overflow: hidden;
+}
 
 .menu {}
 
@@ -100,16 +106,17 @@ li { list-style: none; }
 }
 
 .menu__item {
+  padding: 5px 10px;
+  background: #fff;
+  text-align: center;
+  cursor: pointer;
   outline: none;
+  border: none;
 }
 
 *:hover > .menu__item {
   display: block;
-  background: #fff;
-  border: none;
-  padding: 5px 10px;
   width: 100%;
-  text-align: center;
 }
 
 .menu__item:hover {
@@ -148,6 +155,7 @@ li { list-style: none; }
 }
 
 .flat-button {
+  cursor: pointer;
   display: inline-block;
   border: none;
   margin-bottom: 10px;
@@ -193,7 +201,8 @@ li { list-style: none; }
   height: 2em;
   border: none;
   border-bottom: 1px solid #888;
-  outline: none;
+  outline-color: #ddd;
+  padding: 0 0.5em;
   margin: 5px 0;
 }
 

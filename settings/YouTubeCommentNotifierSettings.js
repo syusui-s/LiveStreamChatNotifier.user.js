@@ -58,6 +58,9 @@ window.addEventListener('DOMContentLoaded', async () => {
       </form>
     `;
 
+    elem.querySelector('.flat-button--add')
+      .addEventListener('click', ev => { ev.preventDefault(); reduce(actions.showAdd()); });
+
     const section = elem.querySelector('section');
 
     const { settings } = state;
@@ -76,8 +79,8 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     const title = current => {
       switch (current) {
-      case States.Editing: return '編集';
-      case States.Adding:  return '追加';
+      case States.Editing: return 'チャンネルの編集';
+      case States.Adding:  return '新しいチャンネルの追加';
       }
     };
 
@@ -89,14 +92,36 @@ window.addEventListener('DOMContentLoaded', async () => {
           <h2>${title(current)}</h2>
           <form class="form">
             <label class="label" for="channel_name">チャンネル名</label>
-            <input class="input-text" name="channel_name" type="text" value="${channelName}">
+            <input class="input-text" name="channel_name" type="text" value="${channelName}" required>
 
+            <button class="flat-button flat-button--sumbit" type="submit">保存</button>
             <button class="flat-button flat-button--cancel">キャンセル</button>
-            <button class="flat-button" type="submit">保存</button>
           </form>
         </div>
       </div>
     `;
+
+    elem.querySelector('.flat-button--cancel')
+      .addEventListener('click', ev => { ev.preventDefault(); reduce(actions.initial()); });
+
+    const form = elem.querySelector('.form');
+
+    const onSubmit = ev => {
+      ev.preventDefault();
+
+      const newChannelName = form.channel_name.value;
+
+      switch (current) {
+      case States.Editing:
+        reduce(actions.edit(channelName, newChannelName));
+        break;
+      case States.Adding:
+        reduce(actions.add(newChannelName));
+        break;
+      }
+    };
+
+    form.addEventListener('submit', onSubmit);
 
     return elem;
   };
@@ -115,6 +140,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const elem = html`
       <li class="channelName">
         <div class="channelName__name">${channelName}</div>
+        <div class="menu-icon"></div>
         <div class="menu">
           <button class="menu__item channelName__edit">編集</button>
           <button class="menu__item channelName__delete">削除</button>
@@ -133,11 +159,72 @@ window.addEventListener('DOMContentLoaded', async () => {
   const States = new Enum([ 'Initial', 'Adding', 'Editing', ]);
 
   const actions = {
+    initial: () => state => ({
+      ...state,
+      current: States.Initial,
+    }),
+
+    showAdd: () => state => ({
+      ...state,
+      current: States.Adding,
+    }),
+
     showEdit: channelName => state => ({
       ...state,
       current: States.Editing,
       editing: channelName,
     }),
+
+    add: newChannelName => state => {
+      if (state.settings.channelNames.has(newChannelName)) {
+        window.alert('チャンネル名はすでに登録されています');
+        return state;
+      }
+      
+      if (! newChannelName.match(/[^\s]+/)) {
+        window.alert('チャンネル名を入力してください');
+        return state;
+      }
+
+      const newChannelNames = new MapSet(state.settings.channelNames);
+      newChannelNames.add(newChannelName);
+
+      const settings = new YouTubeSettings(newChannelNames);
+      repository.saveSettings(settings);
+      
+      return {
+        ...state,
+        current: States.Initial,
+        settings
+      };
+    },
+
+    edit: (oldChannelName, newChannelName) => state => {
+      if (! state.settings.channelNames.has(oldChannelName)) {
+        window.alert('古いチャンネル名がすでに存在しません');
+        return state;
+      }
+      
+      if (state.settings.channelNames.has(newChannelName)) {
+        window.alert('チャンネル名はすでに登録されています');
+        return state;
+      }
+
+      const array = [ ...state.settings.channelNames ];
+      const index = array.indexOf(oldChannelName);
+      array[index] = newChannelName;
+
+      const newChannelNames = new MapSet(array);
+
+      const settings = new YouTubeSettings(newChannelNames);
+      repository.saveSettings(settings);
+      
+      return {
+        ...state,
+        current: States.Initial,
+        settings
+      };
+    },
 
     delete: channelName => state => { 
       if (! window.confirm('本当に削除しますか？')) {
@@ -191,8 +278,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     const newState = reducer(state);
     const newView = settingsView(newState, actions, reduce(newState));
 
-    root.firstChild ?
-      root.firstChild.replaceWith(newView) :
+    // Viewの情報をここで持たないといけないのをなんとかしたい
+    const elem = root.querySelector('.settings');
+    elem ?
+      elem.replaceWith(newView) :
       root.appendChild(newView);
   };
 
