@@ -246,7 +246,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   };
 
-  const storageUrl = new URL(`${window.location.origin}/settings/storage.html`);
+  const storageUrl = new URL(`${window.location.origin}/YouTubeCommentNotifier.user.js/settings/storage.html`);
   const remoteStorage = await RemoteStorage.create(storageUrl);
   const repository = new YouTubeSettingsRepository(remoteStorage);
 
