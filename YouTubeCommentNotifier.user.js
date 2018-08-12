@@ -2,7 +2,7 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            1.0.0
+// @version            1.1.0
 // @match              https://www.youtube.com/live_chat*
 // @match              https://gaming.youtube.com/live_chat*
 // @run-at             document-end
@@ -201,6 +201,8 @@ class YouTubeSettings {
       '2.5次元バーチャルキャスター「獣音ロウ&式大元」チャンネル', 'ぼっちぼろまる', '淫獣帝国', 'Kite Channel', 'すくろーるちゃんねる!!! ／ 巣黒るい', 'Kimino Yumeka Official', '新川良', '天野声太郎', 'Sophiaちゃんねる', '人工知能AI ユニ', '白鳥天羽【バーチャル百合お嬢様】', 'RAY WAKANA', 'ありしあちゃんねる', 'MIALチャンネル', 'クーテトラチャンネル', 'スズキセシル', 'バーチャルおじいちゃん / G3Games', 'ドットチャンネル./DotChannel.', '星菜日向夏のゼロ時間目', '魔王の息子わんわん', 'そらのももか', 'コハクのおうち', 'バーチャルYouTuber蟹', 'くのいち子バーチャルユーチューバー', '姫宮縷愛', '魔界四天王ださお', 'バーチャル美少女 ハラムちゃんねる',
       // にじさんじ SEEDs
       '海夜叉神', 'ドーラ', '名伽尾アズマ☀️', '出雲 霞', '轟 京子', 'シスター・クレア', '花畑チャイカ', '社築', '安土桃', 'D.E.放送局【鈴木勝】', '緑仙channel', '卯月コウ', '八朔ゆず',
+      // にじさんじ SEEDs 二期生
+      '神田笑一', '鳴門こがね', '飛鳥ひな', '春崎エアル', '雨森小夜', '鷹宮リオン', '舞元啓介', 
       // にじさんじ ゲーマーズ
       'Kanae Channel', 'Akabane Channel',
       'saku*channel', '闇夜乃モルル / Yamiyono Moruru', '本間ひまわり - Himawari Honma -',
