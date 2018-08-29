@@ -2,7 +2,7 @@
 // @name               MirrativCommentNotifier.user.js
 // @description        Mirrativのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/MirrativCommentNotifier.user.js
-// @version            1.1.1
+// @version            1.2.0
 // @match              https://www.mirrativ.com
 // @match              https://www.mirrativ.com/*
 // @run-at             document-end
@@ -387,13 +387,17 @@ async function main() {
     '鈴鹿詩子', '宇志海いちご@にじさんじ所属', '家長むぎ@にじさんじ所属', '夕陽リリ  にじさんじ所属',
     '♥️♠️物述有栖♦️♣️@にじ', '野良猫🐟文野環にじさんじ所属', '伏見ガク にじさんじ所属', 'ギルザレンⅢ世🏰【にじさんじ公',
     '剣持刀也@にじさんじ所属', '森中花咲🐻にじさんじ',
+    // にじさんじ ゲーマーズ
+    '叶', '笹木咲🎋にじさんじゲーマーズ', '闇夜乃モルル', '本間ひまわり🌻にじさんじゲーマ', '葛葉＠吸血鬼ヒモVtuber', '椎名唯華',
     // COO
     'いわなが', 'にじさんじ',
     // SEEDs
     'ドーラ', '海夜叉神', '名伽尾アズマ', '出雲霞@にじさんじSEEDs', '轟京子🐐にじさんじSEEDs', 'シスター・クレア', '花畑チャイカ',
     '社築', '_安土 桃', '漆黒の捕食者D.E.(鈴木勝)', '緑仙🐼にじさんじSEEDs', '卯月コウ@にじさんじSEEDs', '八朔ゆず🍊にじさんじSEEDs',
-    // VOIZ
-    '黒羽 黒兎', '神成ポアロ', '成瀬 鳴@VOIZ【ボイズ】', '春崎 エアル 【VOIZ】',
+    // SEEDs 二期生
+    '神田笑一（SEEDs）', '鳴門こがね(SEEDs)', '飛鳥ひな🐤', '春崎 エアル 【Seeds】', '雨森 小夜', '鷹宮リオン',
+    // にじさんじ その他
+    '成瀬 鳴@VOIZ【ボイズ】',
     // ホロライブ
     '夏色まつり@ホロライブ',
   );
