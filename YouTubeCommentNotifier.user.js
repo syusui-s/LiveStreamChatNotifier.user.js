@@ -2,7 +2,7 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            1.2.3
+// @version            1.2.4
 // @match              https://www.youtube.com/live_chat*
 // @match              https://gaming.youtube.com/live_chat*
 // @run-at             document-end
@@ -199,6 +199,15 @@ class YouTubeSettings {
       'Uka\'s room', 'ウェザーロイド Airi（ポン子）', 'Zombi-Ko Channel', 'もちひよこ', 'ケリン', 'あっくん大魔王', 'Roboco Ch. - ロボ子', 'おめがシスターズ [Ω Sister]', 'さはな【VTuber】', 'バーチャルYouTuber万楽えね', 'MeguRoom', 'ニーツちゃんねる', '電脳少女シロGames', '滓残', 'バーチャルゴリラ', 'DeepWebUnderground', 'Hibiki Ao', '最果ての魔王ディープブリザード', 'みゅ みゅ', '岩本町芸能社YouTube', '春日部つくし', '北上双葉', '霊電カスカ', '夜桜たま', 'ぱかチューブっ!', '日雇礼子のドヤ街暮らしチャンネル', '海月ねうmituki neu', 'Tsunohane Akagi Vtube', 'もこめめ*channel', '馬越健太郎チャンネル', 'カルロ ピノ', '金剛いろは', '小林幸子のさっちゃんねる', 'ちえり花京院', 'Kanata Hikari / LYTO【バーチャルYoutuber】', 'Hoonie friends', '織田信姫', 'ミディ / 作曲バーチャルyoutuber', 'さょちゃんのVR図書室', '虚拟DD', '木曽あずき', 'バーチャル園児-めいちゃんねる',
       '猫乃木もち', 'いるはーと', '地獄ちゃんねる', 'ぜったい天使くるみちゃん', '異世界転生系魔王ヘルネス', 'ねむちゃんねる【バーチャル美少女YouTuber】', '八重沢なとり', 'ネコケン Nekoken世紀末系猫耳幼女バーチャルYouTuber', '/ ODDAIオッドアイ', 'ユキミお姉ちゃんねる', '魔法少女ちあちあちゃんねる', '牛巻 りこ', 'Channelパゲ美のバーチャルオカマ', '珠根うたChannel', 'モスコミュール放送局', 'ico通夜の黄泉巡りch', 'poemcore tokyo', 'DOLL GAL millna', 'クゥChannel', 'あさひちゃん寝る【バーチャルYouTuber】', '神楽すず', 'ヤマト イオリ', 'たかじんちゃんねる【バーチャルyoutuber】', 'ナイセンチャンネル naisen channel', '天神 子兎音 Tenjin Kotone', 'スパイト-spite-【公式】', 'メイカちゃんねる', '〜旅するバーチャルyoutuber〜動く城のフィオ', '食虫植物TV -Carnivorous Plants videos-', 'イヌージョンCHANNEL', 'Arcadia L.E. Projectバリトンエルフ', 'かまってちゃんねる', 'あいえるちゃんねる/株式会社インフィニットループ', 'リクビッツ / バーチャルYouTuber', '/食虫植物系VTuberネアちゃんねる', 'シテイルチャンネル', 'Reratan', 'デラとハドウ Channel', 'Channelれらたん', '世界クルミ/バーチャルYouTuber', '白二郎/VRアライグマ', 'Mel Channel 夜空メルチャンネル', 'ファイ博士φ電脳サイエンティスト', '真空管ドールズ公式',
       '2.5次元バーチャルキャスター「獣音ロウ&式大元」チャンネル', 'ぼっちぼろまる', '淫獣帝国', 'Kite Channel', 'すくろーるちゃんねる!!! ／ 巣黒るい', 'Kimino Yumeka Official', '新川良', '天野声太郎', 'Sophiaちゃんねる', '人工知能AI ユニ', '白鳥天羽【バーチャル百合お嬢様】', 'RAY WAKANA', 'ありしあちゃんねる', 'MIALチャンネル', 'クーテトラチャンネル', 'スズキセシル', 'バーチャルおじいちゃん / G3Games', 'ドットチャンネル./DotChannel.', '星菜日向夏のゼロ時間目', '魔王の息子わんわん', 'そらのももか', 'コハクのおうち', 'バーチャルYouTuber蟹', 'くのいち子バーチャルユーチューバー', '姫宮縷愛', '魔界四天王ださお', 'バーチャル美少女 ハラムちゃんねる',
+      // ぱりぷろ
+      'ユメノシオリ',
+      'ユメノシオリさぶちゃんねる',
+      '神楽めあ / KaguraMea',
+      '千草はな / Chigusa Hana',
+      '森永みう/Morinaga Miu',
+      // すとらす
+      '高槻律 / Takatsuki ritsu',
+      '花園セレナ',
       // にじさんじ 一期生
       '月ノ美兎',
       'ちひろチャンネル',
