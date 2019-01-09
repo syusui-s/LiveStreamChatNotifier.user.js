@@ -2,7 +2,7 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            1.2.5
+// @version            1.2.6
 // @match              https://www.youtube.com/live_chat*
 // @match              https://gaming.youtube.com/live_chat*
 // @run-at             document-end
@@ -208,7 +208,7 @@ class YouTubeSettings {
       // すとらす
       '高槻律 / Takatsuki ritsu',
       '花園セレナ',
-      // にじさんじ 一期生
+      // にじさんじ
       '月ノ美兎',
       'ちひろチャンネル',
       'エルフのえる / にじさんじ所属',
@@ -216,9 +216,9 @@ class YouTubeSettings {
       'Shizuka Rin Official',
       '渋谷ハジメのはじめ支部',
       'アキくんちゃんネル',
+      '鈴谷アキの陽だまりの庭',
       '《にじさんじ所属の女神》モイラ',
-      // にじさんじ 二期生
-      '鈴鹿詩子',
+      '鈴鹿詩子 Utako Suzuka',
       '宇志海いちご',
       'Mugi Ienaga Official',
       'Yuhi Riri Official',
@@ -228,11 +228,10 @@ class YouTubeSettings {
       'Gilzaren III Season 1',
       '剣持刀也【にじさんじ所属】',
       '森中花咲',
-      // にじさんじ ゲーマーズ +COO
       'Kanae Channel',
       'Akabane Channel',
       'saku*channel',
-      '闇夜乃モルル / Moruru ch',
+      '闇夜乃モルル / Moruru Yamiyono',
       '本間ひまわり - Himawari Honma -',
       '魔界ノりりむ',
       'Kuzuha Channel',
@@ -240,9 +239,8 @@ class YouTubeSettings {
       '椎名唯華',
       'いわながちゃん',
       'にじさんじ',
-      // にじさんじ SEEDs一期生
       'ドーラ',
-      '海夜叉神【にじさんじSEEDs】',
+      '海夜叉神【にじさんじ】',
       '名伽尾アズマ☀️',
       '《IzumoKasumi》Project channel',
       '轟 京子',
@@ -251,13 +249,13 @@ class YouTubeSettings {
       '社築',
       '安土桃',
       'D.E.放送局【鈴木勝】',
+      'Re‡D.E.放送局【鈴木勝】',
       '緑仙channel',
       '卯月コウ',
-      '八朔ゆず【にじさんじSEEDs】',
-      // にじさんじ SEEDs二期生
+      '八朔ゆず【にじさんじ】',
       '神田笑一',
       '鳴門こがね',
-      '飛鳥ひな',
+      '飛鳥ひな【にじさんじ所属】',
       '春崎エアル',
       '雨森小夜',
       '鷹宮リオン',
@@ -274,6 +272,8 @@ class YouTubeSettings {
       '矢車りね - Rine Yaguruma -',
       '夢追翔のJUKE BOX',
       '黒井しば【にじさんじの犬】',
+      '童田明治-わらべだめいじー-',
+      'Kudou_chitose / 久遠千歳',
       // ホロライブ
       'フブキCh。白上フブキ', 'Aki Channel アキ・ローゼンタール', 'Kurisu Channel 人見クリス', 'Haato Channel 赤井はあと', 'Matsuri Channel 夏色まつり',
       // あにまーれ
