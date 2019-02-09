@@ -2,7 +2,7 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            1.2.6
+// @version            1.2.7
 // @match              https://www.youtube.com/live_chat*
 // @match              https://gaming.youtube.com/live_chat*
 // @run-at             document-end
@@ -209,6 +209,7 @@ class YouTubeSettings {
       '高槻律 / Takatsuki ritsu',
       '花園セレナ',
       // にじさんじ
+      // 一期生出身
       '月ノ美兎',
       'ちひろチャンネル',
       'エルフのえる / にじさんじ所属',
@@ -218,16 +219,18 @@ class YouTubeSettings {
       'アキくんちゃんネル',
       '鈴谷アキの陽だまりの庭',
       '《にじさんじ所属の女神》モイラ',
+      // 二期生出身
       '鈴鹿詩子 Utako Suzuka',
       '宇志海いちご',
       'Mugi Ienaga Official',
       'Yuhi Riri Official',
       '♥️♠️物述有栖♦️♣️',
-      '文野環【にじさんじ所属の野良猫】',
+      '文野環【にじさんじの野良猫】ふみのたまき',
       '伏見ガク【にじさんじ所属】',
       'Gilzaren III Season 1',
       '剣持刀也【にじさんじ所属】',
       '森中花咲',
+      // ゲーマーズ出身＆COO+にじさんじ公式
       'Kanae Channel',
       'Akabane Channel',
       'saku*channel',
@@ -239,8 +242,9 @@ class YouTubeSettings {
       '椎名唯華',
       'いわながちゃん',
       'にじさんじ',
+      // SEEDs一期生出身
       'ドーラ',
-      '海夜叉神【にじさんじ】',
+      '海夜叉神/黄泉波咲夜【にじさんじ】',
       '名伽尾アズマ☀️',
       '《IzumoKasumi》Project channel',
       '轟 京子',
@@ -253,6 +257,7 @@ class YouTubeSettings {
       '緑仙channel',
       '卯月コウ',
       '八朔ゆず【にじさんじ】',
+      // SEEDs二期生出身
       '神田笑一',
       '鳴門こがね',
       '飛鳥ひな【にじさんじ所属】',
@@ -262,18 +267,25 @@ class YouTubeSettings {
       '舞元啓介',
       '竜胆 尊 / Rindou Mikoto',
       'でびでび・でびる',
+      'でびでびチャンネル',
       '桜凛月',
       '町田ちま',
       '月見しずく',
       'ジョー・力一',
-      '遠北千南',
+      '遠北千南 / Achikita Chinami',
       '成瀬 鳴',
       'ベルモンド・バンデラス',
       '矢車りね - Rine Yaguruma -',
       '夢追翔のJUKE BOX',
       '黒井しば【にじさんじの犬】',
+      // 統合以降
       '童田明治-わらべだめいじー-',
       'Kudou_chitose / 久遠千歳',
+      '【3年0組】美玲の教室',
+      '夢月ロア🌖Yuzuki Roa',
+      '小野町 春香♨️onomachi haruka',
+      '語部紡',
+      '瀬戸 美夜子 - Miyako Seto',
       // ホロライブ
       'フブキCh。白上フブキ', 'Aki Channel アキ・ローゼンタール', 'Kurisu Channel 人見クリス', 'Haato Channel 赤井はあと', 'Matsuri Channel 夏色まつり',
       // あにまーれ
