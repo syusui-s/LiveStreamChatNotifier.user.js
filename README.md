@@ -1,6 +1,8 @@
 YouTubeCommentNotifier.user.js
 ====
 
+[![VanillaJS](http://vanilla-js.com/assets/button.png)](http://vanilla-js.com/)
+
 **他のVTuberが配信でコメントをすると通知してくれるプラグインです。**
 
 VTuberがVTuberの配信でコメントすることが増えてきましたが、コメントを目で追うのは大変です。
