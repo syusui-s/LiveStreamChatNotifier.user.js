@@ -2,7 +2,7 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            1.2.8
+// @version            1.2.9
 // @match              https://www.youtube.com/live_chat*
 // @match              https://gaming.youtube.com/live_chat*
 // @run-at             document-end
@@ -222,7 +222,7 @@ class YouTubeSettings {
       // 二期生出身
       '鈴鹿詩子 Utako Suzuka',
       '宇志海いちご',
-      'Mugi Ienaga Official',
+      '家長むぎ【にじさんじ所属】',
       'Yuhi Riri Official',
       '♥️♠️物述有栖♦️♣️',
       '文野環【にじさんじの野良猫】ふみのたまき',
@@ -233,7 +233,7 @@ class YouTubeSettings {
       // ゲーマーズ出身＆COO+にじさんじ公式
       'Kanae Channel',
       'Akabane Channel',
-      'saku*channel',
+      '笹木咲 / Sasaki Saku',
       '闇夜乃モルル / Moruru Yamiyono',
       '本間ひまわり - Himawari Honma -',
       '魔界ノりりむ',
@@ -248,7 +248,7 @@ class YouTubeSettings {
       '名伽尾アズマ☀️',
       '《IzumoKasumi》Project channel【にじさんじ】',
       '轟 京子',
-      'シスター・クレア',
+      'シスター・クレア -SisterClaire-',
       '花畑チャイカ',
       '社築',
       '安土桃',
@@ -287,9 +287,9 @@ class YouTubeSettings {
       '語部紡',
       '瀬戸 美夜子 - Miyako Seto',
       '御伽原 江良 / Otogibara Era【にじさんじ】',
-      'Raito Channel-真堂雷斗/にじさんじ-',
-      '《IzumoKasumi》Project channel【にじさんじ】',
-      '《IzumoKasumi》Project channel【にじさんじ】',
+      '戌亥とこ-Inui Toko-【にじさんじ】',
+      'アンジュ・カトリーナ - Ange Katrina -',
+      'リゼ・ヘルエスタ -Lize Helesta-',
       // ホロライブ
       'フブキCh。白上フブキ', 'Aki Channel アキ・ローゼンタール', 'Kurisu Channel 人見クリス', 'Haato Channel 赤井はあと', 'Matsuri Channel 夏色まつり',
       // あにまーれ
