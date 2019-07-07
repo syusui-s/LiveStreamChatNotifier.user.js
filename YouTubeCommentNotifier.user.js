@@ -2,7 +2,7 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            1.2.9
+// @version            1.2.10
 // @match              https://www.youtube.com/live_chat*
 // @match              https://gaming.youtube.com/live_chat*
 // @run-at             document-end
@@ -211,7 +211,7 @@ class YouTubeSettings {
       // にじさんじ
       // 一期生出身
       '月ノ美兎',
-      'ちひろチャンネル',
+      '勇気ちひろ',
       'エルフのえる / にじさんじ所属',
       '樋口楓【にじさんじ所属】',
       'Shizuka Rin Official',
@@ -219,6 +219,9 @@ class YouTubeSettings {
       'アキくんちゃんネル',
       '鈴谷アキの陽だまりの庭',
       '《にじさんじ所属の女神》モイラ',
+      //COO+にじさんじ公式
+      'いわながちゃん',
+      'にじさんじ',
       // 二期生出身
       '鈴鹿詩子 Utako Suzuka',
       '宇志海いちご',
@@ -228,9 +231,9 @@ class YouTubeSettings {
       '文野環【にじさんじの野良猫】ふみのたまき',
       '伏見ガク【にじさんじ所属】',
       'Gilzaren III Season 2',
-      '剣持刀也【にじさんじ所属】',
+      '剣持刀也',
       '森中花咲',
-      // ゲーマーズ出身＆COO+にじさんじ公式
+      // ゲーマーズ出身
       'Kanae Channel',
       'Akabane Channel',
       '笹木咲 / Sasaki Saku',
@@ -240,8 +243,6 @@ class YouTubeSettings {
       'Kuzuha Channel',
       '雪汝*setsuna channel',
       '椎名唯華',
-      'いわながちゃん',
-      'にじさんじ',
       // SEEDs一期生出身
       'ドーラ',
       '海夜叉神/黄泉波咲夜【にじさんじ】',
@@ -255,6 +256,7 @@ class YouTubeSettings {
       'D.E.放送局【鈴木勝/にじさんじ】',
       'Re‡D.E.放送局【鈴木勝/にじさんじ】',
       '緑仙channel',
+      'みどりのさぶちゃんねる',
       '卯月コウ',
       '八朔ゆず【にじさんじ】',
       // SEEDs二期生出身
@@ -266,10 +268,10 @@ class YouTubeSettings {
       '鷹宮リオン',
       '舞元啓介',
       '竜胆 尊 / Rindou Mikoto',
+      'でびちゃんねる',
       'でびでび・でびる',
-      'でびでびチャンネル',
       '桜凛月',
-      '町田ちま',
+      '町田ちま【にじさんじ】',
       '月見しずく',
       'ジョー・力一',
       '遠北千南 / Achikita Chinami 【にじさんじ】',
@@ -283,13 +285,24 @@ class YouTubeSettings {
       'Kudou_chitose / 久遠千歳',
       '【3年0組】郡道美玲の教室',
       '夢月ロア🌖Yuzuki Roa',
-      '小野町 春香 Onomachi Haruka にじさんじ',
+      '小野町春香-OnomachiHaruka-にじさんじ',
       '語部紡',
       '瀬戸 美夜子 - Miyako Seto',
       '御伽原 江良 / Otogibara Era【にじさんじ】',
       '戌亥とこ-Inui Toko-【にじさんじ】',
       'アンジュ・カトリーナ - Ange Katrina -',
       'リゼ・ヘルエスタ -Lize Helesta-',
+      '三枝明那 / Akina Saegusa',
+      '愛園 愛美/Aizono Manami',
+      '鈴原るる【にじさんじ所属】',
+      '雪城眞尋/Yukishiro Mahiro【にじさんじ所属】',
+      'エクス・アルビオ -Ex Albio-',
+      'レヴィ・エリファ-Levi Elipha-',
+      '葉山舞鈴 / Hayama Marin【にじさんじ所属】',
+      'ニュイ・ソシエール //[Nui Sociere]',
+      '葉加瀬 冬雪 / Hakase Fuyuki',
+      '加賀美 ハヤト/Hayato Kagami',
+      '夜見れな/yorumi rena【にじさんじ所属】',
       // ホロライブ
       'フブキCh。白上フブキ', 'Aki Channel アキ・ローゼンタール', 'Kurisu Channel 人見クリス', 'Haato Channel 赤井はあと', 'Matsuri Channel 夏色まつり',
       // あにまーれ
