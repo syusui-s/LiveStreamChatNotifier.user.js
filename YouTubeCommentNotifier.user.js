@@ -2,7 +2,7 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            1.2.10
+// @version            1.2.11
 // @match              https://www.youtube.com/live_chat*
 // @match              https://gaming.youtube.com/live_chat*
 // @run-at             document-end
@@ -303,6 +303,12 @@ class YouTubeSettings {
       '葉加瀬 冬雪 / Hakase Fuyuki',
       '加賀美 ハヤト/Hayato Kagami',
       '夜見れな/yorumi rena【にじさんじ所属】',
+      '黛 灰 / Kai Mayuzumi【にじさんじ】',
+      'アルス・アルマル -ars almal- 【にじさんじ】',
+      '相羽ういは〖Aiba Uiha〗にじさんじ所属',
+      '天宮 こころ / Kokoro Amamiya 【にじさんじ所属】',
+      'エリー・コニファー / Eli Conifer【にじさんじ】',
+      'ラトナ・プティ -Ratna Petit -',
       // ホロライブ
       'フブキCh。白上フブキ', 'Aki Channel アキ・ローゼンタール', 'Kurisu Channel 人見クリス', 'Haato Channel 赤井はあと', 'Matsuri Channel 夏色まつり',
       // あにまーれ
