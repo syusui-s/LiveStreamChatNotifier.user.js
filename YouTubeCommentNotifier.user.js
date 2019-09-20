@@ -2,7 +2,7 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            1.2.11
+// @version            1.2.12
 // @match              https://www.youtube.com/live_chat*
 // @match              https://gaming.youtube.com/live_chat*
 // @run-at             document-end
@@ -538,7 +538,7 @@ async function main() {
     const bodyElem  = chatItem.querySelector('#message');
 
     if (nameElem && iconElem) {
-      const name      = nameElem.textContent;
+      const name      = nameElem.firstChild.textContent;
       const iconUrl   = iconElem.src.replace(/[^/]*\/photo.jpg$/, '');
       const body      = bodyElemToText(bodyElem);
       const badgeType = nameElem.getAttribute('type');
