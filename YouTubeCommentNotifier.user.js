@@ -2,7 +2,7 @@
 // @name               YouTubeCommentNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
 // @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
-// @version            1.2.12
+// @version            1.2.13
 // @match              https://www.youtube.com/live_chat*
 // @match              https://gaming.youtube.com/live_chat*
 // @run-at             document-end
@@ -219,7 +219,7 @@ class YouTubeSettings {
       'アキくんちゃんネル',
       '鈴谷アキの陽だまりの庭',
       '《にじさんじ所属の女神》モイラ',
-      //COO+にじさんじ公式
+      // COO+にじさんじ公式
       'いわながちゃん',
       'にじさんじ',
       // 二期生出身
@@ -248,7 +248,7 @@ class YouTubeSettings {
       '海夜叉神/黄泉波咲夜【にじさんじ】',
       '名伽尾アズマ☀️',
       '《IzumoKasumi》Project channel【にじさんじ】',
-      '轟 京子',
+      '轟京子/kyoko todoroki【にじさんじ】',
       'シスター・クレア -SisterClaire-',
       '花畑チャイカ',
       '社築',
@@ -273,7 +273,7 @@ class YouTubeSettings {
       '桜凛月',
       '町田ちま【にじさんじ】',
       '月見しずく',
-      'ジョー・力一',
+      'ジョー・力一 Joe Rikiichi',
       '遠北千南 / Achikita Chinami 【にじさんじ】',
       '成瀬 鳴',
       'ベルモンド・バンデラス',
@@ -308,7 +308,13 @@ class YouTubeSettings {
       '相羽ういは〖Aiba Uiha〗にじさんじ所属',
       '天宮 こころ / Kokoro Amamiya 【にじさんじ所属】',
       'エリー・コニファー / Eli Conifer【にじさんじ】',
-      'ラトナ・プティ -Ratna Petit -',
+      'ラトナ・プティ -Ratna Petit -にじさんじ所属',
+      '早瀬 走 / Hayase Sou【にじさんじ所属】',
+      '健屋花那【にじさんじ】KanaSukoya',
+      'シェリン・バーガンディ -Shellin Burgundy- 【にじさんじ】',
+      'フミ/にじさんじ',
+      '星川サラ / Sara Hoshikawa',
+      '山神 カルタ / Karuta Yamagami',
       // ホロライブ
       'フブキCh。白上フブキ', 'Aki Channel アキ・ローゼンタール', 'Kurisu Channel 人見クリス', 'Haato Channel 赤井はあと', 'Matsuri Channel 夏色まつり',
       // あにまーれ
