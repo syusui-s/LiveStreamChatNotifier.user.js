@@ -2,26 +2,29 @@
 <html lang="ja">
 	<head>
 		<meta charset="utf-8">
-		<title>YouTubeCommentNotifier.user.js / MirrativCommentNotifier.user.js - VTuberのコメントを通知してくれるプラグイン</title>
+		<title>LiveStreamChatNotifier.user.js - 配信のチャット投稿をお知らせ</title>
 		<link rel="stylesheet" href="main.css" type="text/css" media="screen" charset="utf-8">
-		<meta name="description" content="YouTube/MirrativのチャットでVTuberがコメントすると通知するプラグインです。Chrome, Firefox, Edgeに対応。">
+		<meta name="description" content="YouTube/Mirrativの配信で特定の人がチャットに投稿すると通知してくれる拡張機能です。Chrome, Firefox, Edgeに対応。">
 		<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 	</head>
 	<body>
 
 		<header id="page-header">
-		<h1 id="youtubecommentnotifier.user.js">YouTubeCommentNotifier.user.js /<br> MirrativCommentNotifier.user.js</h1>
-		<p>
-		<a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="VTuberのYouTubeコメントを通知してくれるプラグインです YouTubeCommentNotifier.user.js" data-url="https://syusui-s.github.io/YouTubeCommentNotifier.user.js/" data-show-count="false" data-size="large">Tweet</a>		</header>
+			<h1>LiveStreamChatNotifier.user.js</h1>
+			<p>
+			<a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-text="LiveStreamChatNotifier.user.js - 配信のチャット投稿をお知らせ" data-url="https://syusui-s.github.io/LiveStreamChatNotifier.user.js/" data-show-count="false" data-size="large">Tweet</a>
+			</p>
+		</header>
 
-		<p><strong>配信でVTuberがコメントをすると通知してくれるプラグインです。</strong></p>
 		<p>
-		VTuberがVTuberの配信でコメントすることが増えてきましたが、コメントを目で追うのは大変です。<br>
-		これをインストールすると、VTuberのコメントを通知してくれるので、追うのが楽になります。<br>
+			<strong>配信のチャットに投稿があったら通知してくれる拡張機能です。</strong><br>
+			見ている配信やアーカイブで、特定の人がチャットを投稿したら通知してくれます。<br>
+			VLiver/バーチャルYouTuber同士の交流を追うのに便利です。
 		</p>
 
+		<h2>特徴</h2>
 		<ul>
-			<li>最初から多くのVTuberに対応</li>
+			<li>最初から多くのバーチャルYouTuberに対応</li>
 			<li>Chrome、Firefox、Edge、Safariなど、多くのブラウザに対応</li>
 		</ul>
 
@@ -29,25 +32,24 @@
 
 		<div class="big-centered">
 			<p>
-			まずは、Tampermonkeyをインストールしましょう<br>
-			※ このソフトを動かすために必要です<br>
-			<a class="button" href="https://tampermonkey.net/" target="_blank">Tampermonkeyをインストール</a>
+				まずは、Tampermonkeyをインストールしましょう<br>
+				<a class="button" href="https://tampermonkey.net/" target="_blank">Tampermonkeyをインストール</a>
 			</p>
 
 			<p>
-			Tampermonkeyをインストールしたら、次のボタンでインストールできます
+				Tampermonkeyをインストールしたら、次のボタンでインストールできます
 			</p>
 
 			<div style="display: flex;">
-			<div>
-			<a class="button button--youtube" href="./YouTubeCommentNotifier.user.js">YouTubeCommentNotifier.user.jsをインストール</a>
-			<br>
-			<a class="button button--youtube button--small" href="./settings/YouTubeCommentNotifierSettings.html">⚙設定画面</a>
-			</div>
+				<div>
+					<a class="button button--youtube" href="./YouTubeCommentNotifier.user.js">YouTube版</a>
+					<br>
+					<a class="button button--youtube button--small" href="./settings/YouTubeCommentNotifierSettings.html">⚙設定画面</a>
+				</div>
 
-			<div>
-			<a class="button button--mirrativ" href="./MirrativCommentNotifier.user.js">MirrativCommentNotifier.user.jsをインストール</a>
-			</div>
+				<div>
+					<a class="button button--mirrativ" href="./MirrativCommentNotifier.user.js">Mirrativ版</a>
+				</div>
 			</div>
 
 			<p>
@@ -56,14 +58,10 @@
 			</p>
 		</div>
 
-		<h2>動作確認</h2>
-		<p><strong>る〜るるる〜！動作確認にオススメの動画です！！！（YouTubeで開いて見てみてください）</strong></p>
-		<iframe width="560" height="315" src="https://www.youtube.com/embed/B-aooH5KOKs?start=3270" frameborder="0" allowfullscreen></iframe>
-
 		<h2>バグ報告・機能要望・質問・プルリクエスト</h2>
-		<p>バグ報告・機能要望・質問は<a href="https://twitter.com/syusui_s">Twitter</a>や<a href="https://github.com/syusui-s/YouTubeCommentNotifier.user.js/issues">GitHub Issues</a>で受け付けております。プルリクエスト歓迎です。詳しくはCONTRIBUTING.mdをご確認ください。</p>
+		<p>バグ報告・機能要望・質問は<a href="https://twitter.com/syusui_s">Twitter</a>や<a href="https://github.com/syusui-s/LiveStreamChatNotifier.user.js/issues">GitHub Issues</a>で受け付けております。プルリクエスト歓迎です。詳しくはCONTRIBUTING.mdをご確認ください。</p>
 
 		<h2>GitHub</h2>
-		<p><a href="https://github.com/syusui-s/YouTubeCommentNotifier.user.js">GitHubのリポジトリ</a>でソースコードを公開しています。本ソフトウェアは、自由ソフトウェア・オープンソースソフトウェアです。</p>
+		<p><a href="https://github.com/syusui-s/LiveStreamChatNotifier.user.js">GitHubのリポジトリ</a>でソースコードを公開しています。本ソフトウェアは、自由ソフトウェア・オープンソースソフトウェアです。</p>
 	</body>
 </html>

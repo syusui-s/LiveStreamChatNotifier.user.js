@@ -1,4 +1,4 @@
-YouTubeCommentNotifier.user.js
+LiveStreamChatNotifier.user.js
 ====
 
 [![VanillaJS](http://vanilla-js.com/assets/button.png)](http://vanilla-js.com/)
@@ -16,7 +16,8 @@ VTuberがVTuberの配信でコメントすることが増えてきましたが�
 インストール方法
 -----
 
-[インストール方法はこちらに記載しています](https://syusui-s.github.io/YouTubeCommentNotifier.user.js/)
+[インストール方法はこちらに記載しています](https://syusui-s.github.io/LiveStreamChatNotifier.user.js)
+
 
 動作検証用動画
 -----
@@ -37,7 +38,7 @@ VTuberがVTuberの配信でコメントすることが増えてきましたが�
 GNU一般公衆利用許諾書(バージョン3か、(任意で)より新しいバージョンのいずれか)の条件の下で、
 再頒布することや改変すること、あるいはその両方を行うことができます。
 
-このプログラムは有用となることを希望して配布されていますが、**いかなる保証もいたしません**。
+このプログラムは有用となることを希望して配布されていますが、 **いかなる保証もいたしません**。
 **商品性** や **特定目的適合性** に対する保証は、暗示されたものも含めて存在しません。
 詳しくは、GNU一般公衆利用許諾書をご覧ください。
 

@@ -1,17 +1,17 @@
 // ==UserScript==
-// @name               YouTubeCommentNotifier.user.js
+// @name               LiveStreamChatNotifier.user.js
 // @description        YouTubeのライブチャットのストリームで特定のメッセージを通知してくれるやつ
-// @namespace          https://github.com/syusui-s/YouTubeCommentNotifier.user.js
+// @namespace          https://github.com/syusui-s/LiveStreamChatNotifier.user.js
 // @version            1.2.13
 // @match              https://www.youtube.com/live_chat*
 // @match              https://gaming.youtube.com/live_chat*
 // @run-at             document-end
-// @downloadURL        https://syusui-s.github.io/YouTubeCommentNotifier.user.js/YouTubeCommentNotifier.user.js
-// @updateURL          https://syusui-s.github.io/YouTubeCommentNotifier.user.js/YouTubeCommentNotifier.user.js
+// @downloadURL        https://syusui-s.github.io/LiveStreamChatNotifier.user.js/YouTubeCommentNotifier.user.js
+// @updateURL          https://syusui-s.github.io/LiveStreamChatNotifier.user.js/YouTubeCommentNotifier.user.js
 // @grant              GM.notification
 // ==/UserScript==
 
-const baseUrl = 'https://syusui-s.github.io/YouTubeCommentNotifier.user.js';
+const baseUrl = 'https://syusui-s.github.io/LiveStreamChatNotifier.user.js';
 
 const workUrls = [
   'https://www.youtube.com/live_chat',
@@ -96,7 +96,7 @@ class RemoteStorage {
     return storage;
   }
 
-  // https://syusui-s.github.io/YouTubeCommentNotifier.user.js/settings/storage.html
+  // https://syusui-s.github.io/LiveStreamChatNotifier.user.js/settings/storage.html
   /*::
     iframe: HTMLIFrameElement
     storageUrl: URL
