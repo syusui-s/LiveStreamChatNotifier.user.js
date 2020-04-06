@@ -246,7 +246,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
   };
 
-  const storageUrl = new URL(`${window.location.origin}/YouTubeCommentNotifier.user.js/settings/storage.html`);
+  const storageUrl = new URL(`${window.location.origin}/LiveStreamChatNotifier.user.js/settings/storage.html`);
   const remoteStorage = await RemoteStorage.create(storageUrl);
   const repository = new YouTubeSettingsRepository(remoteStorage);
 
@@ -258,7 +258,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       window.alert([
         '設定の読み込みに失敗しました。',
         '通常と異なるページで動作させていませんか？',
-        'https://github.com/syusui-s/YouTubeCommentNotifier.user.js/ から設定してみてください',
+        'https://github.com/syusui-s/LiveStreamChatNotifier.user.js/ から設定してみてください',
       ].join('\n'));
 
       return;
